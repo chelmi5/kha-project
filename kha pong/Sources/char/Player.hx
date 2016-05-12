@@ -20,7 +20,7 @@ class Player {
         return this.height;
     }
     
-    public function new(x, y){
+    public function new(x, y) {
         this.x = x;
         this.y = y;
         speed = 6;
@@ -30,18 +30,17 @@ class Player {
         goingDown = false;
     }
     
-    public function update(){
-        
+    public function update() {
 		if(this.goingUp) {
 			this.y -= speed;
 		}
-		if (this.goingDown){
+		if (this.goingDown) {
 			this.y += speed;
 		}
 		checkBounds();
 	}
 	
-	public function render(graphics:Graphics){
+	public function render(graphics:Graphics) {
 		graphics.fillRect(x, y, width, height);
 	}
     
@@ -50,7 +49,7 @@ class Player {
 			this.y = 0;
 		}
 		
-		if (this.y + this.height >= Pong.HEIGHT){
+		if (this.y + this.height >= Pong.HEIGHT) {
 			this.y = Pong.HEIGHT - this.height;
 		}
     }

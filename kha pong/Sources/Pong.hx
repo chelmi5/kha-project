@@ -21,7 +21,7 @@ class Pong {
     public static inline var WIDTH = 800;
     public static inline var HEIGHT = 600;
     
-	public function new() {
+	public function new(){
 		setupStates();
         
         setMenuState();
@@ -29,7 +29,7 @@ class Pong {
         Mouse.get().notify(onMouseDown, null, null, null);
 	}
 
-	public function update():Void {
+	public function update(){
 		switch (gameState){
             case GameState.Play:
                 playState.update();
@@ -38,7 +38,7 @@ class Pong {
         }
 	}
 
-	public function render(framebuffer:Framebuffer):Void {
+	public function render(framebuffer:Framebuffer){
         var graphics = framebuffer.g2;
         graphics.begin();
         
@@ -54,7 +54,7 @@ class Pong {
 		
 	}
     
-    public function setupStates() {
+    public function setupStates(){
         menuState = new MenuState();
         menuState.btnPlay.onClick = setPlayState;
         playState = new PlayState();
@@ -69,7 +69,7 @@ class Pong {
         gameState = GameState.Play;
     }
     
-    public function onMouseDown(button:Int, x:Int, y:Int):Void {
+    public function onMouseDown(button:Int, x:Int, y:Int){
 		switch (gameState){
 			case GameState.Menu:
 				if (button == 0) menuState.btnPlay.onMouseDown(x, y);

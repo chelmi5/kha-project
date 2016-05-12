@@ -37,25 +37,23 @@ class PlayState {
 		Keyboard.get().notify(onKeyDown, onKeyUp);
 	}
 
-	public function update():Void {
-		
+	public function update() {
 		ball.update();
 		leftPlayer.update();
 		rightPlayer.update();
-		playerBounce();
-		wallBallCheck();
-		// then win condition
-		//then score?
+		playerBallCheck();
+		pointCheck();
+		//Keeping score, need way to display it?
 	}
 
-	public function render(graphics:Graphics):Void {
+	public function render(graphics:Graphics) {
 		btnMenu.render(graphics);
 		leftPlayer.render(graphics);
 		rightPlayer.render(graphics);
 		ball.render(graphics);
 	}
 	
-	public function wallBallCheck(){
+	public function pointCheck() {
 		//if either of these happen, means player missed the ball
         if(ball.x <= 0) {
             //right player gets a point
@@ -76,21 +74,21 @@ class PlayState {
 		}
 	}
 	
-	public function playerBounce(){
+	public function playerBallCheck() {
 		if(overlaps(ball, leftPlayer) || overlaps(ball, rightPlayer)) {
 			ball.dirX = -ball.dirX;
 		}
 	}
 	
-	public function overlaps(ball:Ball, player:Player): Bool {
+	public function overlaps(ball:Ball, player:Player):Bool {
     return ball.x <= player.x + player.width && 
            ball.x + ball.width >= player.x && 
            ball.y <= player.y + player.height && 
            ball.y + ball.height >= player.y;
   }
 	
-	public function onKeyDown(key:Key, value:String){
-		switch (key){
+	public function onKeyDown(key:Key, value:String) {
+		switch (key) {
 			case CHAR:
 				if (value == "w"){
 					leftPlayer.goingUp = true;
@@ -106,8 +104,8 @@ class PlayState {
 		}
 	}
 	
-	public function onKeyUp(key:Key, value:String){
-		switch (key){
+	public function onKeyUp(key:Key, value:String) {
+		switch (key) {
 			case CHAR:
 				if (value == "w"){
 					leftPlayer.goingUp = false;
@@ -123,7 +121,7 @@ class PlayState {
 		}
 	}
     
-    public function reset(){
+    public function reset() {
 		ball.reset();
 		leftPlayer.x = 75;
 		leftPlayer.y = 250;

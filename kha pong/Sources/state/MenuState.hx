@@ -19,11 +19,11 @@ class MenuState {
         btnPlay = new Button(imgPlay, 336, 400);
 	}
 
-	public function update():Void {
+	public function update() {
 		
 	}
 
-	public function render(graphics:Graphics):Void {
+	public function render(graphics:Graphics) {
 		graphics.drawImage(imgHeader, Pong.WIDTH / 2 - imgHeader.width / 2, 50);
         btnPlay.render(graphics);
 	}

@@ -19717,16 +19717,16 @@ state_PlayState.prototype = {
 	,wallBallCheck: function() {
 		if(this.ball.x <= 0) {
 			this.rightPoints++;
-			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 63, className : "state.PlayState", methodName : "wallBallCheck"});
-			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 64, className : "state.PlayState", methodName : "wallBallCheck"});
-			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 65, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 62, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 63, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 64, className : "state.PlayState", methodName : "wallBallCheck"});
 			this.ball.resetAndRandomize();
 		}
 		if(this.ball.x + this.ball.get_width() >= 800) {
 			this.leftPoints++;
-			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 72, className : "state.PlayState", methodName : "wallBallCheck"});
-			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 73, className : "state.PlayState", methodName : "wallBallCheck"});
-			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 74, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 71, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 72, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 73, className : "state.PlayState", methodName : "wallBallCheck"});
 			this.ball.resetAndRandomize();
 		}
 	}

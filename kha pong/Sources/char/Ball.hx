@@ -14,33 +14,33 @@ class Ball {
     public var width(get, null):Int;
 	public var height(get, null):Int;
     
-    public function get_width():Int{
+    public function get_width():Int {
 		return this.width;
 	}
 	
-	public function get_height():Int{
+	public function get_height():Int {
 		return this.height;
 	}
     
-    public function new(x:Int, y:Int){
+    public function new(x:Int, y:Int) {
         this.x = x;
         this.y = y;
         width = 3;
         height = 3;
     }
     
-    public function update(){
+    public function update() {
         x += dirX;
         y += dirY;
         
         checkBounds();
     }
     
-    public function render(graphics:Graphics){
+    public function render(graphics:Graphics) {
         graphics.fillCircle(x, y, size);
     }
     
-    public function checkBounds(){
+    public function checkBounds() {
         if(this.y <= 0)
 		{
 			this.dirY = -this.dirY;
@@ -49,23 +49,9 @@ class Ball {
 		if(this.y + this.height >= Pong.HEIGHT) {
 			this.dirY = -this.dirY;
 		}
-        /*
-        //if either of these happen, means player missed the ball
-        if(this.x <= 0) {
-            //right player gets a point
-            resetAndRandomize();
-			//this.dirX = -this.dirX;
-		}
-		
-		if(this.x + this.width >= Pong.WIDTH) {
-            //left player gets a point
-            resetAndRandomize();
-			// this.dirX = -this.dirX;
-		}
-        */
     }
     
-    public function resetAndRandomize(){
+    public function resetAndRandomize() {
         
         this.x = 400;
         
@@ -85,7 +71,7 @@ class Ball {
         }
     }
     
-    public function reset(){
+    public function reset() {
         this.x = 400;
 		this.y = 300;
     }
