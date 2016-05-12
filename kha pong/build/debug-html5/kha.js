@@ -380,8 +380,8 @@ _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 };
 var char_Ball = function(x,y) {
 	this.size = 8;
-	this.dirY = 6;
-	this.dirX = 4;
+	this.dirY = 3;
+	this.dirX = 6;
 	this.x = x;
 	this.y = y;
 	this.width = 3;
@@ -406,15 +406,42 @@ char_Ball.prototype = {
 	,update: function() {
 		this.x += this.dirX;
 		this.y += this.dirY;
+		this.checkBounds();
 	}
 	,render: function(graphics) {
 		kha_graphics2_GraphicsExtension.fillCircle(graphics,this.x,this.y,this.size);
+	}
+	,checkBounds: function() {
+		if(this.y <= 0) {
+			this.dirY = -this.dirY;
+		}
+		if(this.y + this.get_height() >= 600) {
+			this.dirY = -this.dirY;
+		}
+	}
+	,resetAndRandomize: function() {
+		this.x = 400;
+		if(Math.random() > 0.5) {
+			this.y = 200;
+		} else {
+			this.y = 400;
+		}
+		if(Math.random() > 0.5) {
+			this.dirX = -this.dirX;
+		} else {
+			this.dirY = -this.dirY;
+		}
+	}
+	,reset: function() {
+		this.x = 400;
+		this.y = 300;
 	}
 	,__class__: char_Ball
 };
 var char_Player = function(x,y) {
 	this.x = x;
 	this.y = y;
+	this.speed = 6;
 	this.width = 12;
 	this.height = 124;
 	this.goingUp = false;
@@ -425,6 +452,7 @@ char_Player.__name__ = true;
 char_Player.prototype = {
 	x: null
 	,y: null
+	,speed: null
 	,width: null
 	,height: null
 	,goingUp: null
@@ -435,22 +463,25 @@ char_Player.prototype = {
 	,get_height: function() {
 		return this.height;
 	}
-	,upTrue: function() {
-		this.goingUp = true;
-	}
-	,upFalse: function() {
-		this.goingUp = false;
-	}
-	,downTrue: function() {
-		this.goingDown = true;
-	}
-	,downFalse: function() {
-		this.goingDown = false;
-	}
 	,update: function() {
+		if(this.goingUp) {
+			this.y -= this.speed;
+		}
+		if(this.goingDown) {
+			this.y += this.speed;
+		}
+		this.checkBounds();
 	}
 	,render: function(graphics) {
 		graphics.fillRect(this.x,this.y,this.get_width(),this.get_height());
+	}
+	,checkBounds: function() {
+		if(this.y <= 0) {
+			this.y = 0;
+		}
+		if(this.y + this.get_height() >= 600) {
+			this.y = 600 - this.get_height();
+		}
 	}
 	,__class__: char_Player
 };
@@ -19656,6 +19687,8 @@ var state_PlayState = function() {
 	this.leftPlayer = new char_Player(75,250);
 	this.rightPlayer = new char_Player(725,250);
 	this.ball = new char_Ball(400,300);
+	this.leftPoints = 0;
+	this.rightPoints = 0;
 	kha_input_Keyboard.get().notify($bind(this,this.onKeyDown),$bind(this,this.onKeyUp));
 };
 $hxClasses["state.PlayState"] = state_PlayState;
@@ -19666,9 +19699,14 @@ state_PlayState.prototype = {
 	,ball: null
 	,imgMenu: null
 	,btnMenu: null
+	,leftPoints: null
+	,rightPoints: null
 	,update: function() {
-		this.playersMove();
-		this.checkBounds();
+		this.ball.update();
+		this.leftPlayer.update();
+		this.rightPlayer.update();
+		this.playerBounce();
+		this.wallBallCheck();
 	}
 	,render: function(graphics) {
 		this.btnMenu.render(graphics);
@@ -19676,49 +19714,49 @@ state_PlayState.prototype = {
 		this.rightPlayer.render(graphics);
 		this.ball.render(graphics);
 	}
-	,playersMove: function() {
-		if(this.leftPlayer.goingUp) {
-			this.leftPlayer.y -= 4;
+	,wallBallCheck: function() {
+		if(this.ball.x <= 0) {
+			this.rightPoints++;
+			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 63, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 64, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 65, className : "state.PlayState", methodName : "wallBallCheck"});
+			this.ball.resetAndRandomize();
 		}
-		if(this.leftPlayer.goingDown) {
-			this.leftPlayer.y += 4;
-		}
-		if(this.rightPlayer.goingUp) {
-			this.rightPlayer.y -= 4;
-		}
-		if(this.rightPlayer.goingDown) {
-			this.rightPlayer.y += 4;
+		if(this.ball.x + this.ball.get_width() >= 800) {
+			this.leftPoints++;
+			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 72, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 73, className : "state.PlayState", methodName : "wallBallCheck"});
+			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 74, className : "state.PlayState", methodName : "wallBallCheck"});
+			this.ball.resetAndRandomize();
 		}
 	}
-	,checkBounds: function() {
-		if(this.leftPlayer.y <= 0) {
-			this.leftPlayer.y = 0;
+	,playerBounce: function() {
+		if(this.overlaps(this.ball,this.leftPlayer) || this.overlaps(this.ball,this.rightPlayer)) {
+			this.ball.dirX = -this.ball.dirX;
 		}
-		if(this.leftPlayer.y + this.leftPlayer.get_height() >= 600) {
-			this.leftPlayer.y = 600 - this.leftPlayer.get_height();
-		}
-		if(this.rightPlayer.y <= 0) {
-			this.rightPlayer.y = 0;
-		}
-		if(this.rightPlayer.y + this.rightPlayer.get_height() >= 600) {
-			this.rightPlayer.y = 600 - this.rightPlayer.get_height();
+	}
+	,overlaps: function(ball,player) {
+		if(ball.x <= player.x + player.get_width() && ball.x + ball.get_width() >= player.x && ball.y <= player.y + player.get_height()) {
+			return ball.y + ball.get_height() >= player.y;
+		} else {
+			return false;
 		}
 	}
 	,onKeyDown: function(key,value) {
 		switch(key[1]) {
 		case 6:
 			if(value == "w") {
-				this.leftPlayer.upTrue();
+				this.leftPlayer.goingUp = true;
 			}
 			if(value == "s") {
-				this.leftPlayer.downTrue();
+				this.leftPlayer.goingDown = true;
 			}
 			break;
 		case 9:
-			this.rightPlayer.upTrue();
+			this.rightPlayer.goingUp = true;
 			break;
 		case 10:
-			this.rightPlayer.downTrue();
+			this.rightPlayer.goingDown = true;
 			break;
 		default:
 			return;
@@ -19728,25 +19766,24 @@ state_PlayState.prototype = {
 		switch(key[1]) {
 		case 6:
 			if(value == "w") {
-				this.leftPlayer.upFalse();
+				this.leftPlayer.goingUp = false;
 			}
 			if(value == "s") {
-				this.leftPlayer.downFalse();
+				this.leftPlayer.goingDown = false;
 			}
 			break;
 		case 9:
-			this.rightPlayer.upFalse();
+			this.rightPlayer.goingUp = false;
 			break;
 		case 10:
-			this.rightPlayer.downFalse();
+			this.rightPlayer.goingDown = false;
 			break;
 		default:
 			return;
 		}
 	}
 	,reset: function() {
-		this.ball.x = 400;
-		this.ball.y = 300;
+		this.ball.reset();
 		this.leftPlayer.x = 75;
 		this.leftPlayer.y = 250;
 		this.rightPlayer.x = 725;

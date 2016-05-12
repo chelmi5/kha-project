@@ -19,6 +19,9 @@ class PlayState {
     
     public var imgMenu:Image;
     public var btnMenu:Button;
+	
+	public var leftPoints:Int;
+	public var rightPoints:Int;
     
     public function new() {
         imgMenu = Assets.images.menu;
@@ -28,12 +31,21 @@ class PlayState {
 		rightPlayer = new Player(725, 250);
 		ball = new Ball(400, 300);
 		
+		leftPoints = 0;
+		rightPoints = 0;
+		
 		Keyboard.get().notify(onKeyDown, onKeyUp);
 	}
 
 	public function update():Void {
-		playersMove();
-		checkBounds();
+		
+		ball.update();
+		leftPlayer.update();
+		rightPlayer.update();
+		playerBounce();
+		wallBallCheck();
+		// then win condition
+		//then score?
 	}
 
 	public function render(graphics:Graphics):Void {
@@ -43,54 +55,53 @@ class PlayState {
 		ball.render(graphics);
 	}
 	
-	public function playersMove(){
-		//leftPlayer
-		if(leftPlayer.goingUp) {
-			leftPlayer.y -= 4;
+	public function wallBallCheck(){
+		//if either of these happen, means player missed the ball
+        if(ball.x <= 0) {
+            //right player gets a point
+			rightPoints++;
+			trace("Current Score: ");
+			trace("Right Player: " + rightPoints);
+			trace("Left Player: " + leftPoints);
+            ball.resetAndRandomize();
 		}
-		if (leftPlayer.goingDown){
-			leftPlayer.y += 4;
-		}
-		//rightPlayer
-		if(rightPlayer.goingUp) {
-			rightPlayer.y -= 4;
-		}
-		if (rightPlayer.goingDown){
-			rightPlayer.y += 4;
+		
+		if(ball.x + ball.width >= Pong.WIDTH) {
+            //left player gets a point
+			leftPoints++;
+			trace("Current Score: ");
+			trace("Right Player: " + rightPoints);
+			trace("Left Player: " + leftPoints);
+            ball.resetAndRandomize();
 		}
 	}
 	
-	public function checkBounds(){
-		if(leftPlayer.y <= 0) {
-			leftPlayer.y = 0;
-		}
-		
-		if (leftPlayer.y + leftPlayer.height >= 600){
-			leftPlayer.y = 600 - leftPlayer.height;
-		}
-		
-		if(rightPlayer.y <= 0) {
-			rightPlayer.y = 0;
-		}
-		
-		if (rightPlayer.y + rightPlayer.height >= 600){
-			rightPlayer.y = 600 - rightPlayer.height;
+	public function playerBounce(){
+		if(overlaps(ball, leftPlayer) || overlaps(ball, rightPlayer)) {
+			ball.dirX = -ball.dirX;
 		}
 	}
+	
+	public function overlaps(ball:Ball, player:Player): Bool {
+    return ball.x <= player.x + player.width && 
+           ball.x + ball.width >= player.x && 
+           ball.y <= player.y + player.height && 
+           ball.y + ball.height >= player.y;
+  }
 	
 	public function onKeyDown(key:Key, value:String){
 		switch (key){
 			case CHAR:
 				if (value == "w"){
-					leftPlayer.upTrue();
+					leftPlayer.goingUp = true;
 				}
 				if (value == "s"){
-					leftPlayer.downTrue();
+					leftPlayer.goingDown = true;
 				}
 			case UP:
-				rightPlayer.upTrue();
+				rightPlayer.goingUp = true;
 			case DOWN:
-				rightPlayer.downTrue();
+				rightPlayer.goingDown = true;
 		default: return;
 		}
 	}
@@ -99,22 +110,21 @@ class PlayState {
 		switch (key){
 			case CHAR:
 				if (value == "w"){
-					leftPlayer.upFalse();
+					leftPlayer.goingUp = false;
 				}
 				if (value == "s"){
-					leftPlayer.downFalse();
+					leftPlayer.goingDown = false;
 				}
 			case UP:
-				rightPlayer.upFalse();
+				rightPlayer.goingUp = false;
 			case DOWN:
-				rightPlayer.downFalse();
+				rightPlayer.goingDown = false;
 		default: return;
 		}
 	}
     
     public function reset(){
-		ball.x = 400;
-		ball.y = 300;
+		ball.reset();
 		leftPlayer.x = 75;
 		leftPlayer.y = 250;
 		rightPlayer.x = 725;
