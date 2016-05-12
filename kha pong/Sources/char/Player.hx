@@ -7,6 +7,8 @@ class Player {
     public var y:Int;
     public var width(get, null):Int;
     public var height(get, null):Int;
+    public var goingUp:Bool;
+    public var goingDown:Bool;
     
     public function get_width():Int {
         return this.width;
@@ -16,11 +18,29 @@ class Player {
         return this.height;
     }
     
+    public function upTrue(){
+        this.goingUp = true;
+    }
+    
+    public function upFalse(){
+        this.goingUp = false;
+    }
+    
+    public function downTrue(){
+        this.goingDown = true;
+    }
+    
+    public function downFalse(){
+        this.goingDown = false;
+    }
+    
     public function new(x, y){
         this.x = x;
         this.y = y;
-        width = 124;
-        height = 12;
+        width = 12;
+        height = 124;
+        goingUp = false;
+        goingDown = false;
     }
     
     public function update(){

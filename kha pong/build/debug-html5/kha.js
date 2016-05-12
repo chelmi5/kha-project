@@ -378,6 +378,82 @@ _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 		return this1 + 0.0;
 	}
 };
+var char_Ball = function(x,y) {
+	this.size = 8;
+	this.dirY = 6;
+	this.dirX = 4;
+	this.x = x;
+	this.y = y;
+	this.width = 3;
+	this.height = 3;
+};
+$hxClasses["char.Ball"] = char_Ball;
+char_Ball.__name__ = true;
+char_Ball.prototype = {
+	x: null
+	,y: null
+	,dirX: null
+	,dirY: null
+	,size: null
+	,width: null
+	,height: null
+	,get_width: function() {
+		return this.width;
+	}
+	,get_height: function() {
+		return this.height;
+	}
+	,update: function() {
+		this.x += this.dirX;
+		this.y += this.dirY;
+	}
+	,render: function(graphics) {
+		kha_graphics2_GraphicsExtension.fillCircle(graphics,this.x,this.y,this.size);
+	}
+	,__class__: char_Ball
+};
+var char_Player = function(x,y) {
+	this.x = x;
+	this.y = y;
+	this.width = 12;
+	this.height = 124;
+	this.goingUp = false;
+	this.goingDown = false;
+};
+$hxClasses["char.Player"] = char_Player;
+char_Player.__name__ = true;
+char_Player.prototype = {
+	x: null
+	,y: null
+	,width: null
+	,height: null
+	,goingUp: null
+	,goingDown: null
+	,get_width: function() {
+		return this.width;
+	}
+	,get_height: function() {
+		return this.height;
+	}
+	,upTrue: function() {
+		this.goingUp = true;
+	}
+	,upFalse: function() {
+		this.goingUp = false;
+	}
+	,downTrue: function() {
+		this.goingDown = true;
+	}
+	,downFalse: function() {
+		this.goingDown = false;
+	}
+	,update: function() {
+	}
+	,render: function(graphics) {
+		graphics.fillRect(this.x,this.y,this.get_width(),this.get_height());
+	}
+	,__class__: char_Player
+};
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
 haxe_IMap.__name__ = true;
@@ -2868,188 +2944,6 @@ kha_Rotation.prototype = {
 	center: null
 	,angle: null
 	,__class__: kha_Rotation
-};
-var kha_TargetRectangle = function(x,y,w,h,s,r) {
-	this.x = x;
-	this.y = y;
-	this.width = w;
-	this.height = h;
-	this.scaleFactor = s;
-	this.rotation = r;
-};
-$hxClasses["kha.TargetRectangle"] = kha_TargetRectangle;
-kha_TargetRectangle.__name__ = true;
-kha_TargetRectangle.prototype = {
-	x: null
-	,y: null
-	,width: null
-	,height: null
-	,scaleFactor: null
-	,rotation: null
-	,__class__: kha_TargetRectangle
-};
-var kha_Scaler = function() { };
-$hxClasses["kha.Scaler"] = kha_Scaler;
-kha_Scaler.__name__ = true;
-kha_Scaler.targetRect = function(width,height,destinationWidth,destinationHeight,rotation) {
-	var scalex;
-	var scaley;
-	var scalew;
-	var scaleh;
-	var scale;
-	switch(rotation[1]) {
-	case 0:
-		if(width / height > destinationWidth / destinationHeight) {
-			scale = destinationWidth / width;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = 0;
-			scaley = (destinationHeight - scaleh) * 0.5;
-		} else {
-			scale = destinationHeight / height;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = (destinationWidth - scalew) * 0.5;
-			scaley = 0;
-		}
-		break;
-	case 1:
-		if(width / height > destinationHeight / destinationWidth) {
-			scale = destinationHeight / width;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = (destinationWidth - scaleh) * 0.5 + scaleh;
-			scaley = 0;
-		} else {
-			scale = destinationWidth / height;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = scaleh;
-			scaley = (destinationHeight - scalew) * 0.5;
-		}
-		break;
-	case 2:
-		if(width / height > destinationWidth / destinationHeight) {
-			scale = destinationWidth / width;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = scalew;
-			scaley = (destinationHeight - scaleh) * 0.5 + scaleh;
-		} else {
-			scale = destinationHeight / height;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = (destinationWidth - scalew) * 0.5 + scalew;
-			scaley = scaleh;
-		}
-		break;
-	case 3:
-		if(width / height > destinationHeight / destinationWidth) {
-			scale = destinationHeight / width;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = (destinationWidth - scaleh) * 0.5;
-			scaley = scalew;
-		} else {
-			scale = destinationWidth / height;
-			scalew = width * scale;
-			scaleh = height * scale;
-			scalex = 0;
-			scaley = (destinationHeight - scalew) * 0.5 + scalew;
-		}
-		break;
-	}
-	return new kha_TargetRectangle(scalex,scaley,scalew,scaleh,scale,rotation);
-};
-kha_Scaler.transformXDirectly = function(x,y,sourceWidth,sourceHeight,destinationWidth,destinationHeight,rotation) {
-	var targetRect = kha_Scaler.targetRect(sourceWidth,sourceHeight,destinationWidth,destinationHeight,rotation);
-	switch(targetRect.rotation[1]) {
-	case 0:
-		return (x - targetRect.x) / targetRect.scaleFactor | 0;
-	case 1:
-		return (y - targetRect.y) / targetRect.scaleFactor | 0;
-	case 2:
-		return (targetRect.x - x) / targetRect.scaleFactor | 0;
-	case 3:
-		return (targetRect.y - y) / targetRect.scaleFactor | 0;
-	}
-};
-kha_Scaler.transformX = function(x,y,source,destination,rotation) {
-	return kha_Scaler.transformXDirectly(x,y,source.get_width(),source.get_height(),destination.get_width(),destination.get_height(),rotation);
-};
-kha_Scaler.transformYDirectly = function(x,y,sourceWidth,sourceHeight,destinationWidth,destinationHeight,rotation) {
-	var targetRect = kha_Scaler.targetRect(sourceWidth,sourceHeight,destinationWidth,destinationHeight,rotation);
-	switch(targetRect.rotation[1]) {
-	case 0:
-		return (y - targetRect.y) / targetRect.scaleFactor | 0;
-	case 1:
-		return (targetRect.x - x) / targetRect.scaleFactor | 0;
-	case 2:
-		return (targetRect.y - y) / targetRect.scaleFactor | 0;
-	case 3:
-		return (x - targetRect.x) / targetRect.scaleFactor | 0;
-	}
-};
-kha_Scaler.transformY = function(x,y,source,destination,rotation) {
-	return kha_Scaler.transformYDirectly(x,y,source.get_width(),source.get_height(),destination.get_width(),destination.get_height(),rotation);
-};
-kha_Scaler.scale = function(source,destination,rotation) {
-	var g = destination.get_g2();
-	var transformation = kha_Scaler.getScaledTransformation(source.get_width(),source.get_height(),destination.get_width(),destination.get_height(),rotation);
-	g.setTransformation(transformation);
-	g.transformations[g.transformations.length - 1] = transformation;
-	g.set_color(kha__$Color_Color_$Impl_$.White);
-	g.set_opacity(1);
-	g.drawImage(source,0,0);
-};
-kha_Scaler.getScaledTransformation = function(width,height,destinationWidth,destinationHeight,rotation) {
-	var rect = kha_Scaler.targetRect(width,height,destinationWidth,destinationHeight,rotation);
-	var sf = rect.scaleFactor;
-	var transformation = new kha_math_FastMatrix3(sf,0,rect.x,0,sf,rect.y,0,0,1);
-	switch(rotation[1]) {
-	case 0:
-		break;
-	case 1:
-		var alpha = Math.PI / 2;
-		var _00 = Math.cos(alpha);
-		var _10 = -Math.sin(alpha);
-		var _01 = Math.sin(alpha);
-		var _11 = Math.cos(alpha);
-		var m__20 = 0;
-		var m__21 = 0;
-		var m__02 = 0;
-		var m__12 = 0;
-		var m__22 = 1;
-		transformation = new kha_math_FastMatrix3(transformation._00 * _00 + transformation._10 * _01 + transformation._20 * m__02,transformation._00 * _10 + transformation._10 * _11 + transformation._20 * m__12,transformation._00 * m__20 + transformation._10 * m__21 + transformation._20 * m__22,transformation._01 * _00 + transformation._11 * _01 + transformation._21 * m__02,transformation._01 * _10 + transformation._11 * _11 + transformation._21 * m__12,transformation._01 * m__20 + transformation._11 * m__21 + transformation._21 * m__22,transformation._02 * _00 + transformation._12 * _01 + transformation._22 * m__02,transformation._02 * _10 + transformation._12 * _11 + transformation._22 * m__12,transformation._02 * m__20 + transformation._12 * m__21 + transformation._22 * m__22);
-		break;
-	case 2:
-		var alpha1 = Math.PI;
-		var _001 = Math.cos(alpha1);
-		var _101 = -Math.sin(alpha1);
-		var _011 = Math.sin(alpha1);
-		var _111 = Math.cos(alpha1);
-		var m__201 = 0;
-		var m__211 = 0;
-		var m__021 = 0;
-		var m__121 = 0;
-		var m__221 = 1;
-		transformation = new kha_math_FastMatrix3(transformation._00 * _001 + transformation._10 * _011 + transformation._20 * m__021,transformation._00 * _101 + transformation._10 * _111 + transformation._20 * m__121,transformation._00 * m__201 + transformation._10 * m__211 + transformation._20 * m__221,transformation._01 * _001 + transformation._11 * _011 + transformation._21 * m__021,transformation._01 * _101 + transformation._11 * _111 + transformation._21 * m__121,transformation._01 * m__201 + transformation._11 * m__211 + transformation._21 * m__221,transformation._02 * _001 + transformation._12 * _011 + transformation._22 * m__021,transformation._02 * _101 + transformation._12 * _111 + transformation._22 * m__121,transformation._02 * m__201 + transformation._12 * m__211 + transformation._22 * m__221);
-		break;
-	case 3:
-		var alpha2 = Math.PI * 3 / 2;
-		var _002 = Math.cos(alpha2);
-		var _102 = -Math.sin(alpha2);
-		var _012 = Math.sin(alpha2);
-		var _112 = Math.cos(alpha2);
-		var m__202 = 0;
-		var m__212 = 0;
-		var m__022 = 0;
-		var m__122 = 0;
-		var m__222 = 1;
-		transformation = new kha_math_FastMatrix3(transformation._00 * _002 + transformation._10 * _012 + transformation._20 * m__022,transformation._00 * _102 + transformation._10 * _112 + transformation._20 * m__122,transformation._00 * m__202 + transformation._10 * m__212 + transformation._20 * m__222,transformation._01 * _002 + transformation._11 * _012 + transformation._21 * m__022,transformation._01 * _102 + transformation._11 * _112 + transformation._21 * m__122,transformation._01 * m__202 + transformation._11 * m__212 + transformation._21 * m__222,transformation._02 * _002 + transformation._12 * _012 + transformation._22 * m__022,transformation._02 * _102 + transformation._12 * _112 + transformation._22 * m__122,transformation._02 * m__202 + transformation._12 * m__212 + transformation._22 * m__222);
-		break;
-	}
-	return transformation;
 };
 var kha_TimeTask = function() {
 };
@@ -13516,6 +13410,85 @@ kha_graphics2_Graphics1.prototype = {
 	}
 	,__class__: kha_graphics2_Graphics1
 };
+var kha_graphics2_GraphicsExtension = function() { };
+$hxClasses["kha.graphics2.GraphicsExtension"] = kha_graphics2_GraphicsExtension;
+kha_graphics2_GraphicsExtension.__name__ = true;
+kha_graphics2_GraphicsExtension.drawCircle = function(g2,cx,cy,radius,strength,segments) {
+	if(segments == null) {
+		segments = 0;
+	}
+	if(strength == null) {
+		strength = 1;
+	}
+	if(segments <= 0) {
+		segments = Math.floor(10 * Math.sqrt(radius));
+	}
+	var theta = 2 * Math.PI / segments;
+	var c = Math.cos(theta);
+	var s = Math.sin(theta);
+	var x = radius;
+	var y = 0.0;
+	var _g1 = 0;
+	var _g = segments;
+	while(_g1 < _g) {
+		++_g1;
+		var px = x + cx;
+		var py = y + cy;
+		var t = x;
+		x = c * x - s * y;
+		y = c * y + s * t;
+		g2.drawLine(px,py,x + cx,y + cy,strength);
+	}
+};
+kha_graphics2_GraphicsExtension.fillCircle = function(g2,cx,cy,radius,segments) {
+	if(segments == null) {
+		segments = 0;
+	}
+	if(segments <= 0) {
+		segments = Math.floor(10 * Math.sqrt(radius));
+	}
+	var theta = 2 * Math.PI / segments;
+	var c = Math.cos(theta);
+	var s = Math.sin(theta);
+	var x = radius;
+	var y = 0.0;
+	var _g1 = 0;
+	var _g = segments;
+	while(_g1 < _g) {
+		++_g1;
+		var px = x + cx;
+		var py = y + cy;
+		var t = x;
+		x = c * x - s * y;
+		y = c * y + s * t;
+		g2.fillTriangle(px,py,x + cx,y + cy,cx,cy);
+	}
+};
+kha_graphics2_GraphicsExtension.drawPolygon = function(g2,x,y,vertices,strength) {
+	if(strength == null) {
+		strength = 1;
+	}
+	var iterator = HxOverrides.iter(vertices);
+	var v0 = iterator.next();
+	var v1 = v0;
+	while(iterator.hasNext()) {
+		var v2 = iterator.next();
+		g2.drawLine(v1.x + x,v1.y + y,v2.x + x,v2.y + y,strength);
+		v1 = v2;
+	}
+	g2.drawLine(v1.x + x,v1.y + y,v0.x + x,v0.y + y,strength);
+};
+kha_graphics2_GraphicsExtension.fillPolygon = function(g2,x,y,vertices) {
+	var iterator = HxOverrides.iter(vertices);
+	var v0 = iterator.next();
+	var v1 = v0;
+	while(iterator.hasNext()) {
+		var v2 = iterator.next();
+		g2.fillTriangle(v1.x + x,v1.y + y,v2.x + x,v2.y + y,x,y);
+		v1 = v2;
+	}
+	g2.fillTriangle(v1.x + x,v1.y + y,v0.x + x,v0.y + y,x,y);
+};
 var kha_graphics2_ImageScaleQuality = $hxClasses["kha.graphics2.ImageScaleQuality"] = { __ename__ : true, __constructs__ : ["Low","High"] };
 kha_graphics2_ImageScaleQuality.Low = ["Low",0];
 kha_graphics2_ImageScaleQuality.Low.toString = $estr;
@@ -19680,18 +19653,104 @@ state_MenuState.prototype = {
 var state_PlayState = function() {
 	this.imgMenu = kha_Assets.images.menu;
 	this.btnMenu = new ui_Button(this.imgMenu,758,8);
+	this.leftPlayer = new char_Player(75,250);
+	this.rightPlayer = new char_Player(725,250);
+	this.ball = new char_Ball(400,300);
+	kha_input_Keyboard.get().notify($bind(this,this.onKeyDown),$bind(this,this.onKeyUp));
 };
 $hxClasses["state.PlayState"] = state_PlayState;
 state_PlayState.__name__ = true;
 state_PlayState.prototype = {
-	imgMenu: null
+	leftPlayer: null
+	,rightPlayer: null
+	,ball: null
+	,imgMenu: null
 	,btnMenu: null
 	,update: function() {
+		this.playersMove();
+		this.checkBounds();
 	}
 	,render: function(graphics) {
 		this.btnMenu.render(graphics);
+		this.leftPlayer.render(graphics);
+		this.rightPlayer.render(graphics);
+		this.ball.render(graphics);
+	}
+	,playersMove: function() {
+		if(this.leftPlayer.goingUp) {
+			this.leftPlayer.y -= 4;
+		}
+		if(this.leftPlayer.goingDown) {
+			this.leftPlayer.y += 4;
+		}
+		if(this.rightPlayer.goingUp) {
+			this.rightPlayer.y -= 4;
+		}
+		if(this.rightPlayer.goingDown) {
+			this.rightPlayer.y += 4;
+		}
+	}
+	,checkBounds: function() {
+		if(this.leftPlayer.y <= 0) {
+			this.leftPlayer.y = 0;
+		}
+		if(this.leftPlayer.y + this.leftPlayer.get_height() >= 600) {
+			this.leftPlayer.y = 600 - this.leftPlayer.get_height();
+		}
+		if(this.rightPlayer.y <= 0) {
+			this.rightPlayer.y = 0;
+		}
+		if(this.rightPlayer.y + this.rightPlayer.get_height() >= 600) {
+			this.rightPlayer.y = 600 - this.rightPlayer.get_height();
+		}
+	}
+	,onKeyDown: function(key,value) {
+		switch(key[1]) {
+		case 6:
+			if(value == "w") {
+				this.leftPlayer.upTrue();
+			}
+			if(value == "s") {
+				this.leftPlayer.downTrue();
+			}
+			break;
+		case 9:
+			this.rightPlayer.upTrue();
+			break;
+		case 10:
+			this.rightPlayer.downTrue();
+			break;
+		default:
+			return;
+		}
+	}
+	,onKeyUp: function(key,value) {
+		switch(key[1]) {
+		case 6:
+			if(value == "w") {
+				this.leftPlayer.upFalse();
+			}
+			if(value == "s") {
+				this.leftPlayer.downFalse();
+			}
+			break;
+		case 9:
+			this.rightPlayer.upFalse();
+			break;
+		case 10:
+			this.rightPlayer.downFalse();
+			break;
+		default:
+			return;
+		}
 	}
 	,reset: function() {
+		this.ball.x = 400;
+		this.ball.y = 300;
+		this.leftPlayer.x = 75;
+		this.leftPlayer.y = 250;
+		this.rightPlayer.x = 725;
+		this.rightPlayer.y = 250;
 	}
 	,__class__: state_PlayState
 };
