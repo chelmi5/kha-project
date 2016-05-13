@@ -180,88 +180,102 @@ var Main = function() { };
 $hxClasses["Main"] = Main;
 Main.__name__ = true;
 Main.main = function() {
-	kha_System.init({ title : "Pong", width : 1024, height : 768},function() {
+	kha_System.init({ title : "Project", width : 1024, height : 768},function() {
 		kha_Assets.loadEverything(function() {
-			var Project = new Pong();
-			kha_Scheduler.addTimeTask($bind(Project,Project.update),0,0.0166666666666666664);
-			kha_System.notifyOnRender($bind(Project,Project.render));
+			var Project1 = new Project();
+			kha_Scheduler.addTimeTask($bind(Project1,Project1.update),0,0.0166666666666666664);
+			kha_System.notifyOnRender($bind(Project1,Project1.render));
 		});
 	});
 };
 Math.__name__ = true;
-var GameState = $hxClasses["GameState"] = { __ename__ : true, __constructs__ : ["Menu","Play","Retry"] };
-GameState.Menu = ["Menu",0];
-GameState.Menu.toString = $estr;
-GameState.Menu.__enum__ = GameState;
-GameState.Play = ["Play",1];
-GameState.Play.toString = $estr;
-GameState.Play.__enum__ = GameState;
-GameState.Retry = ["Retry",2];
-GameState.Retry.toString = $estr;
-GameState.Retry.__enum__ = GameState;
-var Pong = function() {
-	this.setupStates();
-	this.setMenuState();
-	kha_input_Mouse.get().notify($bind(this,this.onMouseDown),null,null,null);
+var Project = function() {
+	var structure = new kha_graphics4_VertexStructure();
+	structure.add("pos",kha_graphics4_VertexData.Float3);
+	structure.add("col",kha_graphics4_VertexData.Float3);
+	this.pipeline = new kha_graphics4_PipelineState();
+	this.pipeline.inputLayout = [structure];
+	this.pipeline.fragmentShader = kha_Shaders.simple_frag;
+	this.pipeline.vertexShader = kha_Shaders.simple_vert;
+	this.pipeline.depthWrite = true;
+	this.pipeline.depthMode = kha_graphics4_CompareMode.Less;
+	this.pipeline.compile();
+	this.mvpID = this.pipeline.getConstantLocation("MVP");
+	var projection = kha_math_FastMatrix4.perspectiveProjection(45.0,1.33333333333333326,0.1,100.0);
+	var view = kha_math_FastMatrix4.lookAt(new kha_math_FastVector3(4,3,3),new kha_math_FastVector3(0,0,0),new kha_math_FastVector3(0,1,0));
+	var model__00 = 1;
+	var model__10 = 0;
+	var model__20 = 0;
+	var model__30 = 0;
+	var model__01 = 0;
+	var model__11 = 1;
+	var model__21 = 0;
+	var model__31 = 0;
+	var model__02 = 0;
+	var model__12 = 0;
+	var model__22 = 1;
+	var model__32 = 0;
+	var model__03 = 0;
+	var model__13 = 0;
+	var model__23 = 0;
+	var model__33 = 1;
+	this.mvp = new kha_math_FastMatrix4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+	var _this = this.mvp;
+	this.mvp = new kha_math_FastMatrix4(_this._00 * projection._00 + _this._10 * projection._01 + _this._20 * projection._02 + _this._30 * projection._03,_this._00 * projection._10 + _this._10 * projection._11 + _this._20 * projection._12 + _this._30 * projection._13,_this._00 * projection._20 + _this._10 * projection._21 + _this._20 * projection._22 + _this._30 * projection._23,_this._00 * projection._30 + _this._10 * projection._31 + _this._20 * projection._32 + _this._30 * projection._33,_this._01 * projection._00 + _this._11 * projection._01 + _this._21 * projection._02 + _this._31 * projection._03,_this._01 * projection._10 + _this._11 * projection._11 + _this._21 * projection._12 + _this._31 * projection._13,_this._01 * projection._20 + _this._11 * projection._21 + _this._21 * projection._22 + _this._31 * projection._23,_this._01 * projection._30 + _this._11 * projection._31 + _this._21 * projection._32 + _this._31 * projection._33,_this._02 * projection._00 + _this._12 * projection._01 + _this._22 * projection._02 + _this._32 * projection._03,_this._02 * projection._10 + _this._12 * projection._11 + _this._22 * projection._12 + _this._32 * projection._13,_this._02 * projection._20 + _this._12 * projection._21 + _this._22 * projection._22 + _this._32 * projection._23,_this._02 * projection._30 + _this._12 * projection._31 + _this._22 * projection._32 + _this._32 * projection._33,_this._03 * projection._00 + _this._13 * projection._01 + _this._23 * projection._02 + _this._33 * projection._03,_this._03 * projection._10 + _this._13 * projection._11 + _this._23 * projection._12 + _this._33 * projection._13,_this._03 * projection._20 + _this._13 * projection._21 + _this._23 * projection._22 + _this._33 * projection._23,_this._03 * projection._30 + _this._13 * projection._31 + _this._23 * projection._32 + _this._33 * projection._33);
+	var _this1 = this.mvp;
+	this.mvp = new kha_math_FastMatrix4(_this1._00 * view._00 + _this1._10 * view._01 + _this1._20 * view._02 + _this1._30 * view._03,_this1._00 * view._10 + _this1._10 * view._11 + _this1._20 * view._12 + _this1._30 * view._13,_this1._00 * view._20 + _this1._10 * view._21 + _this1._20 * view._22 + _this1._30 * view._23,_this1._00 * view._30 + _this1._10 * view._31 + _this1._20 * view._32 + _this1._30 * view._33,_this1._01 * view._00 + _this1._11 * view._01 + _this1._21 * view._02 + _this1._31 * view._03,_this1._01 * view._10 + _this1._11 * view._11 + _this1._21 * view._12 + _this1._31 * view._13,_this1._01 * view._20 + _this1._11 * view._21 + _this1._21 * view._22 + _this1._31 * view._23,_this1._01 * view._30 + _this1._11 * view._31 + _this1._21 * view._32 + _this1._31 * view._33,_this1._02 * view._00 + _this1._12 * view._01 + _this1._22 * view._02 + _this1._32 * view._03,_this1._02 * view._10 + _this1._12 * view._11 + _this1._22 * view._12 + _this1._32 * view._13,_this1._02 * view._20 + _this1._12 * view._21 + _this1._22 * view._22 + _this1._32 * view._23,_this1._02 * view._30 + _this1._12 * view._31 + _this1._22 * view._32 + _this1._32 * view._33,_this1._03 * view._00 + _this1._13 * view._01 + _this1._23 * view._02 + _this1._33 * view._03,_this1._03 * view._10 + _this1._13 * view._11 + _this1._23 * view._12 + _this1._33 * view._13,_this1._03 * view._20 + _this1._13 * view._21 + _this1._23 * view._22 + _this1._33 * view._23,_this1._03 * view._30 + _this1._13 * view._31 + _this1._23 * view._32 + _this1._33 * view._33);
+	var _this2 = this.mvp;
+	this.mvp = new kha_math_FastMatrix4(_this2._00 * model__00 + _this2._10 * model__01 + _this2._20 * model__02 + _this2._30 * model__03,_this2._00 * model__10 + _this2._10 * model__11 + _this2._20 * model__12 + _this2._30 * model__13,_this2._00 * model__20 + _this2._10 * model__21 + _this2._20 * model__22 + _this2._30 * model__23,_this2._00 * model__30 + _this2._10 * model__31 + _this2._20 * model__32 + _this2._30 * model__33,_this2._01 * model__00 + _this2._11 * model__01 + _this2._21 * model__02 + _this2._31 * model__03,_this2._01 * model__10 + _this2._11 * model__11 + _this2._21 * model__12 + _this2._31 * model__13,_this2._01 * model__20 + _this2._11 * model__21 + _this2._21 * model__22 + _this2._31 * model__23,_this2._01 * model__30 + _this2._11 * model__31 + _this2._21 * model__32 + _this2._31 * model__33,_this2._02 * model__00 + _this2._12 * model__01 + _this2._22 * model__02 + _this2._32 * model__03,_this2._02 * model__10 + _this2._12 * model__11 + _this2._22 * model__12 + _this2._32 * model__13,_this2._02 * model__20 + _this2._12 * model__21 + _this2._22 * model__22 + _this2._32 * model__23,_this2._02 * model__30 + _this2._12 * model__31 + _this2._22 * model__32 + _this2._32 * model__33,_this2._03 * model__00 + _this2._13 * model__01 + _this2._23 * model__02 + _this2._33 * model__03,_this2._03 * model__10 + _this2._13 * model__11 + _this2._23 * model__12 + _this2._33 * model__13,_this2._03 * model__20 + _this2._13 * model__21 + _this2._23 * model__22 + _this2._33 * model__23,_this2._03 * model__30 + _this2._13 * model__31 + _this2._23 * model__32 + _this2._33 * model__33);
+	this.vertexBuffer = new kha_graphics4_VertexBuffer(Project.vertices.length / 3 | 0,structure,kha_graphics4_Usage.StaticUsage);
+	var vbData = this.vertexBuffer.lock();
+	var _g1 = 0;
+	var _g = vbData.length / 6 | 0;
+	while(_g1 < _g) {
+		var i = _g1++;
+		vbData[i * 6] = Project.vertices[i * 3];
+		vbData[i * 6 + 1] = Project.vertices[i * 3 + 1];
+		vbData[i * 6 + 2] = Project.vertices[i * 3 + 2];
+		vbData[i * 6 + 3] = Project.colors[i * 3];
+		vbData[i * 6 + 4] = Project.colors[i * 3 + 1];
+		vbData[i * 6 + 5] = Project.colors[i * 3 + 2];
+	}
+	this.vertexBuffer.unlock();
+	var indices = [];
+	var _g11 = 0;
+	var _g2 = Project.vertices.length / 3 | 0;
+	while(_g11 < _g2) indices.push(_g11++);
+	this.indexBuffer = new kha_graphics4_IndexBuffer(indices.length,kha_graphics4_Usage.StaticUsage);
+	var iData = this.indexBuffer.lock();
+	var _g12 = 0;
+	var _g3 = iData.length;
+	while(_g12 < _g3) {
+		var i1 = _g12++;
+		iData[i1] = indices[i1];
+	}
+	this.indexBuffer.unlock();
 };
-$hxClasses["Pong"] = Pong;
-Pong.__name__ = true;
-Pong.prototype = {
-	gameState: null
-	,menuState: null
-	,playState: null
+$hxClasses["Project"] = Project;
+Project.__name__ = true;
+Project.prototype = {
+	vertexBuffer: null
+	,indexBuffer: null
+	,pipeline: null
+	,mvp: null
+	,mvpID: null
 	,update: function() {
-		if(this.gameState[1] == 1) {
-			this.playState.update();
-		} else {
-			return;
-		}
 	}
 	,render: function(framebuffer) {
-		var graphics = framebuffer.get_g2();
-		graphics.begin();
-		switch(this.gameState[1]) {
-		case 0:
-			this.menuState.render(graphics);
-			break;
-		case 1:
-			this.playState.render(graphics);
-			break;
-		default:
-			return;
-		}
-		graphics.end();
+		var g = framebuffer.get_g4();
+		g.begin();
+		g.clear(kha__$Color_Color_$Impl_$.fromFloats(0.0,0.0,0.3));
+		g.setVertexBuffer(this.vertexBuffer);
+		g.setIndexBuffer(this.indexBuffer);
+		g.setPipeline(this.pipeline);
+		g.setMatrix(this.mvpID,this.mvp);
+		g.drawIndexedVertices();
+		g.end();
 	}
-	,setupStates: function() {
-		this.menuState = new state_MenuState();
-		this.menuState.btnPlay.onClick = $bind(this,this.setPlayState);
-		this.playState = new state_PlayState();
-		this.playState.btnMenu.onClick = $bind(this,this.setMenuState);
-	}
-	,setMenuState: function() {
-		this.gameState = GameState.Menu;
-	}
-	,setPlayState: function() {
-		this.gameState = GameState.Play;
-	}
-	,onMouseDown: function(button,x,y) {
-		switch(this.gameState[1]) {
-		case 0:
-			if(button == 0) {
-				this.menuState.btnPlay.onMouseDown(x,y);
-			}
-			break;
-		case 1:
-			if(button == 0) {
-				this.playState.btnMenu.onMouseDown(x,y);
-				this.playState.reset();
-			}
-			break;
-		default:
-			return;
-		}
-	}
-	,__class__: Pong
+	,__class__: Project
 };
 var Reflect = function() { };
 $hxClasses["Reflect"] = Reflect;
@@ -377,113 +391,6 @@ _$UInt_UInt_$Impl_$.toFloat = function(this1) {
 	} else {
 		return this1 + 0.0;
 	}
-};
-var char_Ball = function(x,y) {
-	this.size = 8;
-	this.dirY = 3;
-	this.dirX = 6;
-	this.x = x;
-	this.y = y;
-	this.width = 3;
-	this.height = 3;
-};
-$hxClasses["char.Ball"] = char_Ball;
-char_Ball.__name__ = true;
-char_Ball.prototype = {
-	x: null
-	,y: null
-	,dirX: null
-	,dirY: null
-	,size: null
-	,width: null
-	,height: null
-	,get_width: function() {
-		return this.width;
-	}
-	,get_height: function() {
-		return this.height;
-	}
-	,update: function() {
-		this.x += this.dirX;
-		this.y += this.dirY;
-		this.checkBounds();
-	}
-	,render: function(graphics) {
-		kha_graphics2_GraphicsExtension.fillCircle(graphics,this.x,this.y,this.size);
-	}
-	,checkBounds: function() {
-		if(this.y <= 0) {
-			this.dirY = -this.dirY;
-		}
-		if(this.y + this.get_height() >= 600) {
-			this.dirY = -this.dirY;
-		}
-	}
-	,resetAndRandomize: function() {
-		this.x = 400;
-		if(Math.random() > 0.5) {
-			this.y = 200;
-		} else {
-			this.y = 400;
-		}
-		if(Math.random() > 0.5) {
-			this.dirX = -this.dirX;
-		} else {
-			this.dirY = -this.dirY;
-		}
-	}
-	,reset: function() {
-		this.x = 400;
-		this.y = 300;
-	}
-	,__class__: char_Ball
-};
-var char_Player = function(x,y) {
-	this.x = x;
-	this.y = y;
-	this.speed = 6;
-	this.width = 12;
-	this.height = 124;
-	this.goingUp = false;
-	this.goingDown = false;
-};
-$hxClasses["char.Player"] = char_Player;
-char_Player.__name__ = true;
-char_Player.prototype = {
-	x: null
-	,y: null
-	,speed: null
-	,width: null
-	,height: null
-	,goingUp: null
-	,goingDown: null
-	,get_width: function() {
-		return this.width;
-	}
-	,get_height: function() {
-		return this.height;
-	}
-	,update: function() {
-		if(this.goingUp) {
-			this.y -= this.speed;
-		}
-		if(this.goingDown) {
-			this.y += this.speed;
-		}
-		this.checkBounds();
-	}
-	,render: function(graphics) {
-		graphics.fillRect(this.x,this.y,this.get_width(),this.get_height());
-	}
-	,checkBounds: function() {
-		if(this.y <= 0) {
-			this.y = 0;
-		}
-		if(this.y + this.get_height() >= 600) {
-			this.y = 600 - this.get_height();
-		}
-	}
-	,__class__: char_Player
 };
 var haxe_IMap = function() { };
 $hxClasses["haxe.IMap"] = haxe_IMap;
@@ -1881,56 +1788,11 @@ js_html_compat_Uint8Array._subarray = function(start,end) {
 	return a;
 };
 var kha_ImageList = function() {
-	this.playDescription = { files : ["play.png"], original_height : 128, type : "image", original_width : 128, name : "play"};
-	this.playName = "play";
-	this.play = null;
-	this.menuDescription = { files : ["menu.png"], original_height : 32, type : "image", original_width : 32, name : "menu"};
-	this.menuName = "menu";
-	this.menu = null;
-	this.headerDescription = { files : ["header.png"], original_height : 159, type : "image", original_width : 289, name : "header"};
-	this.headerName = "header";
-	this.header = null;
 };
 $hxClasses["kha.ImageList"] = kha_ImageList;
 kha_ImageList.__name__ = true;
 kha_ImageList.prototype = {
-	header: null
-	,headerName: null
-	,headerDescription: null
-	,headerLoad: function(done) {
-		kha_Assets.loadImage("header",function(image) {
-			done();
-		});
-	}
-	,headerUnload: function() {
-		this.header.unload();
-		this.header = null;
-	}
-	,menu: null
-	,menuName: null
-	,menuDescription: null
-	,menuLoad: function(done) {
-		kha_Assets.loadImage("menu",function(image) {
-			done();
-		});
-	}
-	,menuUnload: function() {
-		this.menu.unload();
-		this.menu = null;
-	}
-	,play: null
-	,playName: null
-	,playDescription: null
-	,playLoad: function(done) {
-		kha_Assets.loadImage("play",function(image) {
-			done();
-		});
-	}
-	,playUnload: function() {
-		this.play.unload();
-		this.play = null;
-	}
-	,__class__: kha_ImageList
+	__class__: kha_ImageList
 };
 var kha_SoundList = function() {
 };
@@ -3430,6 +3292,12 @@ kha_Shaders.init = function() {
 	var data7 = Reflect.field(kha_Shaders,"painter_video_vertData");
 	var bytes7 = haxe_Unserializer.run(data7);
 	kha_Shaders.painter_video_vert = new kha_graphics4_VertexShader(kha_internal_BytesBlob.fromBytes(bytes7));
+	var data8 = Reflect.field(kha_Shaders,"simple_fragData");
+	var bytes8 = haxe_Unserializer.run(data8);
+	kha_Shaders.simple_frag = new kha_graphics4_FragmentShader(kha_internal_BytesBlob.fromBytes(bytes8));
+	var data9 = Reflect.field(kha_Shaders,"simple_vertData");
+	var bytes9 = haxe_Unserializer.run(data9);
+	kha_Shaders.simple_vert = new kha_graphics4_VertexShader(kha_internal_BytesBlob.fromBytes(bytes9));
 };
 var kha_Sound = function() {
 };
@@ -13441,85 +13309,6 @@ kha_graphics2_Graphics1.prototype = {
 	}
 	,__class__: kha_graphics2_Graphics1
 };
-var kha_graphics2_GraphicsExtension = function() { };
-$hxClasses["kha.graphics2.GraphicsExtension"] = kha_graphics2_GraphicsExtension;
-kha_graphics2_GraphicsExtension.__name__ = true;
-kha_graphics2_GraphicsExtension.drawCircle = function(g2,cx,cy,radius,strength,segments) {
-	if(segments == null) {
-		segments = 0;
-	}
-	if(strength == null) {
-		strength = 1;
-	}
-	if(segments <= 0) {
-		segments = Math.floor(10 * Math.sqrt(radius));
-	}
-	var theta = 2 * Math.PI / segments;
-	var c = Math.cos(theta);
-	var s = Math.sin(theta);
-	var x = radius;
-	var y = 0.0;
-	var _g1 = 0;
-	var _g = segments;
-	while(_g1 < _g) {
-		++_g1;
-		var px = x + cx;
-		var py = y + cy;
-		var t = x;
-		x = c * x - s * y;
-		y = c * y + s * t;
-		g2.drawLine(px,py,x + cx,y + cy,strength);
-	}
-};
-kha_graphics2_GraphicsExtension.fillCircle = function(g2,cx,cy,radius,segments) {
-	if(segments == null) {
-		segments = 0;
-	}
-	if(segments <= 0) {
-		segments = Math.floor(10 * Math.sqrt(radius));
-	}
-	var theta = 2 * Math.PI / segments;
-	var c = Math.cos(theta);
-	var s = Math.sin(theta);
-	var x = radius;
-	var y = 0.0;
-	var _g1 = 0;
-	var _g = segments;
-	while(_g1 < _g) {
-		++_g1;
-		var px = x + cx;
-		var py = y + cy;
-		var t = x;
-		x = c * x - s * y;
-		y = c * y + s * t;
-		g2.fillTriangle(px,py,x + cx,y + cy,cx,cy);
-	}
-};
-kha_graphics2_GraphicsExtension.drawPolygon = function(g2,x,y,vertices,strength) {
-	if(strength == null) {
-		strength = 1;
-	}
-	var iterator = HxOverrides.iter(vertices);
-	var v0 = iterator.next();
-	var v1 = v0;
-	while(iterator.hasNext()) {
-		var v2 = iterator.next();
-		g2.drawLine(v1.x + x,v1.y + y,v2.x + x,v2.y + y,strength);
-		v1 = v2;
-	}
-	g2.drawLine(v1.x + x,v1.y + y,v0.x + x,v0.y + y,strength);
-};
-kha_graphics2_GraphicsExtension.fillPolygon = function(g2,x,y,vertices) {
-	var iterator = HxOverrides.iter(vertices);
-	var v0 = iterator.next();
-	var v1 = v0;
-	while(iterator.hasNext()) {
-		var v2 = iterator.next();
-		g2.fillTriangle(v1.x + x,v1.y + y,v2.x + x,v2.y + y,x,y);
-		v1 = v2;
-	}
-	g2.fillTriangle(v1.x + x,v1.y + y,v0.x + x,v0.y + y,x,y);
-};
 var kha_graphics2_ImageScaleQuality = $hxClasses["kha.graphics2.ImageScaleQuality"] = { __ename__ : true, __constructs__ : ["Low","High"] };
 kha_graphics2_ImageScaleQuality.Low = ["Low",0];
 kha_graphics2_ImageScaleQuality.Low.toString = $estr;
@@ -19662,161 +19451,6 @@ kha_simd_Float32x4.prototype = {
 	,_3: null
 	,__class__: kha_simd_Float32x4
 };
-var state_MenuState = function() {
-	this.imgHeader = kha_Assets.images.header;
-	this.imgPlay = kha_Assets.images.play;
-	this.btnPlay = new ui_Button(this.imgPlay,336,400);
-};
-$hxClasses["state.MenuState"] = state_MenuState;
-state_MenuState.__name__ = true;
-state_MenuState.prototype = {
-	imgHeader: null
-	,imgPlay: null
-	,btnPlay: null
-	,update: function() {
-	}
-	,render: function(graphics) {
-		graphics.drawImage(this.imgHeader,400. - this.imgHeader.get_width() / 2,50);
-		this.btnPlay.render(graphics);
-	}
-	,__class__: state_MenuState
-};
-var state_PlayState = function() {
-	this.imgMenu = kha_Assets.images.menu;
-	this.btnMenu = new ui_Button(this.imgMenu,758,8);
-	this.leftPlayer = new char_Player(75,250);
-	this.rightPlayer = new char_Player(725,250);
-	this.ball = new char_Ball(400,300);
-	this.leftPoints = 0;
-	this.rightPoints = 0;
-	kha_input_Keyboard.get().notify($bind(this,this.onKeyDown),$bind(this,this.onKeyUp));
-};
-$hxClasses["state.PlayState"] = state_PlayState;
-state_PlayState.__name__ = true;
-state_PlayState.prototype = {
-	leftPlayer: null
-	,rightPlayer: null
-	,ball: null
-	,imgMenu: null
-	,btnMenu: null
-	,leftPoints: null
-	,rightPoints: null
-	,update: function() {
-		this.ball.update();
-		this.leftPlayer.update();
-		this.rightPlayer.update();
-		this.playerBallCheck();
-		this.pointCheck();
-	}
-	,render: function(graphics) {
-		this.btnMenu.render(graphics);
-		this.leftPlayer.render(graphics);
-		this.rightPlayer.render(graphics);
-		this.ball.render(graphics);
-	}
-	,pointCheck: function() {
-		if(this.ball.x <= 0) {
-			this.rightPoints++;
-			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 61, className : "state.PlayState", methodName : "pointCheck"});
-			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 62, className : "state.PlayState", methodName : "pointCheck"});
-			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 63, className : "state.PlayState", methodName : "pointCheck"});
-			this.ball.resetAndRandomize();
-		}
-		if(this.ball.x + this.ball.get_width() >= 800) {
-			this.leftPoints++;
-			haxe_Log.trace("Current Score: ",{ fileName : "PlayState.hx", lineNumber : 70, className : "state.PlayState", methodName : "pointCheck"});
-			haxe_Log.trace("Right Player: " + this.rightPoints,{ fileName : "PlayState.hx", lineNumber : 71, className : "state.PlayState", methodName : "pointCheck"});
-			haxe_Log.trace("Left Player: " + this.leftPoints,{ fileName : "PlayState.hx", lineNumber : 72, className : "state.PlayState", methodName : "pointCheck"});
-			this.ball.resetAndRandomize();
-		}
-	}
-	,playerBallCheck: function() {
-		if(this.overlaps(this.ball,this.leftPlayer) || this.overlaps(this.ball,this.rightPlayer)) {
-			this.ball.dirX = -this.ball.dirX;
-		}
-	}
-	,overlaps: function(ball,player) {
-		if(ball.x <= player.x + player.get_width() && ball.x + ball.get_width() >= player.x && ball.y <= player.y + player.get_height()) {
-			return ball.y + ball.get_height() >= player.y;
-		} else {
-			return false;
-		}
-	}
-	,onKeyDown: function(key,value) {
-		switch(key[1]) {
-		case 6:
-			if(value == "w") {
-				this.leftPlayer.goingUp = true;
-			}
-			if(value == "s") {
-				this.leftPlayer.goingDown = true;
-			}
-			break;
-		case 9:
-			this.rightPlayer.goingUp = true;
-			break;
-		case 10:
-			this.rightPlayer.goingDown = true;
-			break;
-		default:
-			return;
-		}
-	}
-	,onKeyUp: function(key,value) {
-		switch(key[1]) {
-		case 6:
-			if(value == "w") {
-				this.leftPlayer.goingUp = false;
-			}
-			if(value == "s") {
-				this.leftPlayer.goingDown = false;
-			}
-			break;
-		case 9:
-			this.rightPlayer.goingUp = false;
-			break;
-		case 10:
-			this.rightPlayer.goingDown = false;
-			break;
-		default:
-			return;
-		}
-	}
-	,reset: function() {
-		this.ball.reset();
-		this.leftPlayer.x = 75;
-		this.leftPlayer.y = 250;
-		this.rightPlayer.x = 725;
-		this.rightPlayer.y = 250;
-	}
-	,__class__: state_PlayState
-};
-var ui_Button = function(image,x,y) {
-	this.x = x;
-	this.y = y;
-	this.image = image;
-};
-$hxClasses["ui.Button"] = ui_Button;
-ui_Button.__name__ = true;
-ui_Button.prototype = {
-	x: null
-	,y: null
-	,image: null
-	,onClick: null
-	,render: function(graphics) {
-		graphics.drawImage(this.image,this.x,this.y);
-	}
-	,onMouseDown: function(x,y) {
-		if(x >= this.x && x <= this.x + this.image.get_width() && y >= this.y && y <= this.y + this.image.get_height()) {
-			if(this.onClick != null) {
-				this.onClick();
-			}
-			return true;
-		}
-		return false;
-	}
-	,__class__: ui_Button
-};
 function $iterator(o) { if( o instanceof Array ) return function() { return HxOverrides.iter(o); }; return typeof(o.iterator) == 'function' ? $bind(o,o.iterator) : o.iterator; }
 var $_, $fid = 0;
 function $bind(o,m) { if( m == null ) return null; if( m.__id__ == null ) m.__id__ = $fid++; var f; if( o.hx__closures__ == null ) o.hx__closures__ = {}; else f = o.hx__closures__[m.__id__]; if( f == null ) { f = function(){ return f.method.apply(f.scope, arguments); }; f.scope = o; f.method = m; o.hx__closures__[m.__id__] = f; } return f; }
@@ -19843,8 +19477,8 @@ if(ArrayBuffer.prototype.slice == null) {
 var DataView = $global.DataView || js_html_compat_DataView;
 var Float32Array = $global.Float32Array || js_html_compat_Float32Array._new;
 var Uint8Array = $global.Uint8Array || js_html_compat_Uint8Array._new;
-Pong.WIDTH = 800;
-Pong.HEIGHT = 600;
+Project.vertices = [-1.0,-1.0,-1.0,-1.0,-1.0,1.0,-1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,-1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,-1.0,-1.0,-1.0,-1.0,1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,1.0,1.0,-1.0,1.0,1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,1.0,-1.0,1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,1.0,1.0,1.0,-1.0,1.0,1.0,1.0,-1.0,1.0];
+Project.colors = [0.583,0.771,0.014,0.609,0.115,0.436,0.327,0.483,0.844,0.822,0.569,0.201,0.435,0.602,0.223,0.310,0.747,0.185,0.597,0.770,0.761,0.559,0.436,0.730,0.359,0.583,0.152,0.483,0.596,0.789,0.559,0.861,0.639,0.195,0.548,0.859,0.014,0.184,0.576,0.771,0.328,0.970,0.406,0.615,0.116,0.676,0.977,0.133,0.971,0.572,0.833,0.140,0.616,0.489,0.997,0.513,0.064,0.945,0.719,0.592,0.543,0.021,0.978,0.279,0.317,0.505,0.167,0.620,0.077,0.347,0.857,0.137,0.055,0.953,0.042,0.714,0.505,0.345,0.783,0.290,0.734,0.722,0.645,0.174,0.302,0.455,0.848,0.225,0.587,0.040,0.517,0.713,0.338,0.053,0.959,0.120,0.393,0.621,0.362,0.673,0.211,0.457,0.820,0.883,0.371,0.982,0.099,0.879];
 haxe_Unserializer.DEFAULT_RESOLVER = new haxe__$Unserializer_DefaultResolver();
 haxe_Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe_ds_ObjectMap.count = 0;
@@ -19882,6 +19516,8 @@ kha_Shaders.painter_text_fragData = "s572:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3
 kha_Shaders.painter_text_vertData = "s526:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgcHJvamVjdGlvbk1hdHJpeDsKYXR0cmlidXRlIHZlYzMgdmVydGV4UG9zaXRpb247CnZhcnlpbmcgdmVjMiB0ZXhDb29yZDsKYXR0cmlidXRlIHZlYzIgdGV4UG9zaXRpb247CnZhcnlpbmcgdmVjNCBmcmFnbWVudENvbG9yOwphdHRyaWJ1dGUgdmVjNCB2ZXJ0ZXhDb2xvcjsKCgp2b2lkIG1haW4oKQp7CglnbF9Qb3NpdGlvbiA9IChwcm9qZWN0aW9uTWF0cml4ICogdmVjNCh2ZXJ0ZXhQb3NpdGlvblswXSwgdmVydGV4UG9zaXRpb25bMV0sIHZlcnRleFBvc2l0aW9uWzJdLCAxLjApKTsKCXRleENvb3JkID0gdGV4UG9zaXRpb247CglmcmFnbWVudENvbG9yID0gdmVydGV4Q29sb3I7CglyZXR1cm47Cn0KCg";
 kha_Shaders.painter_video_fragData = "s656:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3V0aW9uIG1vZGUgOApwcmVjaXNpb24gbWVkaXVtcCBmbG9hdDsKdW5pZm9ybSBzYW1wbGVyMkQgdGV4Owp2YXJ5aW5nIHZlYzIgdGV4Q29vcmQ7CnZhcnlpbmcgdmVjNCBjb2xvcjsKCgp2b2lkIG1haW4oKQp7Cgl2ZWM0IHRleGNvbG9yXzk7Cgl0ZXhjb2xvcl85ID0gKHRleHR1cmUyRCh0ZXgsIHRleENvb3JkKSAqIGNvbG9yKTsKCXRleGNvbG9yXzkgPSB2ZWM0KCh2ZWMzKHRleGNvbG9yXzlbMF0sIHRleGNvbG9yXzlbMV0sIHRleGNvbG9yXzlbMl0pICogY29sb3JbM10pWzBdLCAodmVjMyh0ZXhjb2xvcl85WzBdLCB0ZXhjb2xvcl85WzFdLCB0ZXhjb2xvcl85WzJdKSAqIGNvbG9yWzNdKVsxXSwgKHZlYzModGV4Y29sb3JfOVswXSwgdGV4Y29sb3JfOVsxXSwgdGV4Y29sb3JfOVsyXSkgKiBjb2xvclszXSlbMl0sIHRleGNvbG9yXzlbM10pOwoJZ2xfRnJhZ0NvbG9yID0gdGV4Y29sb3JfOTsKCXJldHVybjsKfQoK";
 kha_Shaders.painter_video_vertData = "s504:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgcHJvamVjdGlvbk1hdHJpeDsKYXR0cmlidXRlIHZlYzMgdmVydGV4UG9zaXRpb247CnZhcnlpbmcgdmVjMiB0ZXhDb29yZDsKYXR0cmlidXRlIHZlYzIgdGV4UG9zaXRpb247CnZhcnlpbmcgdmVjNCBjb2xvcjsKYXR0cmlidXRlIHZlYzQgdmVydGV4Q29sb3I7CgoKdm9pZCBtYWluKCkKewoJZ2xfUG9zaXRpb24gPSAocHJvamVjdGlvbk1hdHJpeCAqIHZlYzQodmVydGV4UG9zaXRpb25bMF0sIHZlcnRleFBvc2l0aW9uWzFdLCB2ZXJ0ZXhQb3NpdGlvblsyXSwgMS4wKSk7Cgl0ZXhDb29yZCA9IHRleFBvc2l0aW9uOwoJY29sb3IgPSB2ZXJ0ZXhDb2xvcjsKCXJldHVybjsKfQoK";
+kha_Shaders.simple_fragData = "s271:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3V0aW9uIG1vZGUgOApwcmVjaXNpb24gbWVkaXVtcCBmbG9hdDsKdmFyeWluZyB2ZWMzIGZyYWdtZW50Q29sb3I7CgoKdm9pZCBtYWluKCkKewoJZ2xfRnJhZ0NvbG9yID0gdmVjNChmcmFnbWVudENvbG9yWzBdLCBmcmFnbWVudENvbG9yWzFdLCBmcmFnbWVudENvbG9yWzJdLCAxLjApOwoJcmV0dXJuOwp9Cgo";
+kha_Shaders.simple_vertData = "s310:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgTVZQOwphdHRyaWJ1dGUgdmVjMyBwb3M7CnZhcnlpbmcgdmVjMyBmcmFnbWVudENvbG9yOwphdHRyaWJ1dGUgdmVjMyBjb2w7CgoKdm9pZCBtYWluKCkKewoJZ2xfUG9zaXRpb24gPSAoTVZQICogdmVjNChwb3NbMF0sIHBvc1sxXSwgcG9zWzJdLCAxLjApKTsKCWZyYWdtZW50Q29sb3IgPSBjb2w7CglyZXR1cm47Cn0KCg";
 kha_System.renderListeners = [];
 kha_System.foregroundListeners = [];
 kha_System.resumeListeners = [];
