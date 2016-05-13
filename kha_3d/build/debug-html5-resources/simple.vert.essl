@@ -2,14 +2,15 @@
 precision mediump float;
 uniform mat4 MVP;
 attribute vec3 pos;
-varying vec3 fragmentColor;
-attribute vec3 col;
+varying vec2 vUV;
+attribute vec2 uv;
+attribute vec2 nor;
 
 
 void main()
 {
 	gl_Position = (MVP * vec4(pos[0], pos[1], pos[2], 1.0));
-	fragmentColor = col;
+	vUV = uv;
 	return;
 }
 

@@ -1,6 +1,22 @@
 {
 	"files": [
 		{
+			"name": "cube_obj",
+			"type": "blob",
+			"files": [
+				"cube.obj"
+			]
+		},
+		{
+			"name": "uvmap",
+			"type": "image",
+			"original_width": 512,
+			"original_height": 512,
+			"files": [
+				"uvmap.png"
+			]
+		},
+		{
 			"name": "painter_colored_frag",
 			"files": [
 				"painter-colored.frag.essl"

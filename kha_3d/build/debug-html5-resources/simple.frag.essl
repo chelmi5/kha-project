@@ -1,12 +1,13 @@
 #version 100
 // Unknown execution mode 8
 precision mediump float;
-varying vec3 fragmentColor;
+uniform sampler2D myTextureSampler;
+varying vec2 vUV;
 
 
 void main()
 {
-	gl_FragColor = vec4(fragmentColor[0], fragmentColor[1], fragmentColor[2], 1.0);
+	gl_FragColor = texture2D(myTextureSampler, vUV);
 	return;
 }
 

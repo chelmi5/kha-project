@@ -24,85 +24,6 @@ import kha.math.FastMatrix4;
 import kha.math.FastVector3;
 
 class Project {
-	
-	// An array of vertices to form a cube
-	static var vertices:Array<Float> = [
-	    -1.0,-1.0,-1.0,
-		-1.0,-1.0, 1.0,
-		-1.0, 1.0, 1.0,
-		 1.0, 1.0,-1.0,
-		-1.0,-1.0,-1.0,
-		-1.0, 1.0,-1.0,
-		 1.0,-1.0, 1.0,
-		-1.0,-1.0,-1.0,
-		 1.0,-1.0,-1.0,
-		 1.0, 1.0,-1.0,
-		 1.0,-1.0,-1.0,
-		-1.0,-1.0,-1.0,
-		-1.0,-1.0,-1.0,
-		-1.0, 1.0, 1.0,
-		-1.0, 1.0,-1.0,
-		 1.0,-1.0, 1.0,
-		-1.0,-1.0, 1.0,
-		-1.0,-1.0,-1.0,
-		-1.0, 1.0, 1.0,
-		-1.0,-1.0, 1.0,
-		 1.0,-1.0, 1.0,
-		 1.0, 1.0, 1.0,
-		 1.0,-1.0,-1.0,
-		 1.0, 1.0,-1.0,
-		 1.0,-1.0,-1.0,
-		 1.0, 1.0, 1.0,
-		 1.0,-1.0, 1.0,
-		 1.0, 1.0, 1.0,
-		 1.0, 1.0,-1.0,
-		-1.0, 1.0,-1.0,
-		 1.0, 1.0, 1.0,
-		-1.0, 1.0,-1.0,
-		-1.0, 1.0, 1.0,
-		 1.0, 1.0, 1.0,
-		-1.0, 1.0, 1.0,
-		 1.0,-1.0, 1.0
-	];
-	// Array of colors for each cube vertex
-	static var colors:Array<Float> = [
-	    0.583,  0.771,  0.014,
-		0.609,  0.115,  0.436,
-		0.327,  0.483,  0.844,
-		0.822,  0.569,  0.201,
-		0.435,  0.602,  0.223,
-		0.310,  0.747,  0.185,
-		0.597,  0.770,  0.761,
-		0.559,  0.436,  0.730,
-		0.359,  0.583,  0.152,
-		0.483,  0.596,  0.789,
-		0.559,  0.861,  0.639,
-		0.195,  0.548,  0.859,
-		0.014,  0.184,  0.576,
-		0.771,  0.328,  0.970,
-		0.406,  0.615,  0.116,
-		0.676,  0.977,  0.133,
-		0.971,  0.572,  0.833,
-		0.140,  0.616,  0.489,
-		0.997,  0.513,  0.064,
-		0.945,  0.719,  0.592,
-		0.543,  0.021,  0.978,
-		0.279,  0.317,  0.505,
-		0.167,  0.620,  0.077,
-		0.347,  0.857,  0.137,
-		0.055,  0.953,  0.042,
-		0.714,  0.505,  0.345,
-		0.783,  0.290,  0.734,
-		0.722,  0.645,  0.174,
-		0.302,  0.455,  0.848,
-		0.225,  0.587,  0.040,
-		0.517,  0.713,  0.338,
-		0.053,  0.959,  0.120,
-		0.393,  0.621,  0.362,
-		0.673,  0.211,  0.457,
-		0.820,  0.883,  0.371,
-		0.982,  0.099,  0.879
-	];
 
 	var vertexBuffer:VertexBuffer;
 	var indexBuffer:IndexBuffer;
@@ -111,50 +32,83 @@ class Project {
 	var mvp:FastMatrix4;
 	var mvpID:ConstantLocation;
 
-	public function new() {
-		
-		// Add mouse and keyboard listeners
-		Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove, null);
-		Keyboard.get().notify(onKeyDown, onKeyUp);
+	var model:FastMatrix4;
+	var view:FastMatrix4;
+	var projection:FastMatrix4;
 
-		// Used to calculate delta time
-		lastTime = Scheduler.time();
-		
+	var textureID:TextureUnit;
+    var image:Image;
+
+    var lastTime = 0.0;
+
+	var position:FastVector3 = new FastVector3(0, 0, 5); // Initial position: on +Z
+	var horizontalAngle = 3.14; // Initial horizontal angle: toward -Z
+	var verticalAngle = 0.0; // Initial vertical angle: none
+
+	var moveForward = false;
+    var moveBackward = false;
+    var strafeLeft = false;
+    var strafeRight = false;
+	var isMouseDown = false;
+
+	var mouseX = 0.0;
+	var mouseY = 0.0;
+	var mouseDeltaX = 0.0;
+	var mouseDeltaY = 0.0;
+
+	var speed = 3.0; // 3 units / second
+	var mouseSpeed = 0.005;
+
+	public function new() {
+    	// Load all assets defined in khafile.js
+    	Assets.loadEverything(loadingFinished);
+    }
+
+	function loadingFinished() {
 		// Define vertex structure
 		var structure = new VertexStructure();
         structure.add("pos", VertexData.Float3);
-        structure.add("col", VertexData.Float3);
-        // Save length - we store position and color data
-        var structureLength = 6;
+        structure.add("uv", VertexData.Float2);
+        structure.add("nor", VertexData.Float3);
+        // Save length - we store position, uv and normal data
+        var structureLength = 8;
 
         // Compile pipeline state
 		// Shaders are located in 'Sources/Shaders' directory
         // and Kha includes them automatically
 		pipeline = new PipelineState();
 		pipeline.inputLayout = [structure];
-		pipeline.fragmentShader = Shaders.simple_frag;
 		pipeline.vertexShader = Shaders.simple_vert;
+		pipeline.fragmentShader = Shaders.simple_frag;
 		// Set depth mode
         pipeline.depthWrite = true;
         pipeline.depthMode = CompareMode.Less;
+        // Set culling
+        pipeline.cullMode = CullMode.CounterClockwise;
 		pipeline.compile();
 
 		// Get a handle for our "MVP" uniform
 		mvpID = pipeline.getConstantLocation("MVP");
 
+		// Get a handle for texture sample
+		textureID = pipeline.getTextureUnit("myTextureSampler");
+
+		// Texture
+		image = Assets.images.uvmap;
+
 		// Projection matrix: 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-		var projection = FastMatrix4.perspectiveProjection(45.0, 4.0 / 3.0, 0.1, 100.0);
+		projection = FastMatrix4.perspectiveProjection(45.0, 4.0 / 3.0, 0.1, 100.0);
 		// Or, for an ortho camera
-		//var projection = FastMatrix4.orthogonalProjection(-10.0, 10.0, -10.0, 10.0, 0.0, 100.0); // In world coordinates
+		//projection = FastMatrix4.orthogonalProjection(-10.0, 10.0, -10.0, 10.0, 0.0, 100.0); // In world coordinates
 		
 		// Camera matrix
-		var view = FastMatrix4.lookAt(new FastVector3(4, 3, 3), // Camera is at (4, 3, 3), in World Space
-								  new FastVector3(0, 0, 0), // and looks at the origin
-								  new FastVector3(0, 1, 0) // Head is up (set to (0, -1, 0) to look upside-down)
+		view = FastMatrix4.lookAt(new FastVector3(4, 3, 3), // Camera is at (4, 3, 3), in World Space
+							  new FastVector3(0, 0, 0), // and looks at the origin
+							  new FastVector3(0, 1, 0) // Head is up (set to (0, -1, 0) to look upside-down)
 		);
 
 		// Model matrix: an identity matrix (model will be at the origin)
-		var model = FastMatrix4.identity();
+		model = FastMatrix4.identity();
 		// Our ModelViewProjection: multiplication of our 3 matrices
 		// Remember, matrix multiplication is the other way around
 		mvp = FastMatrix4.identity();
@@ -162,30 +116,24 @@ class Project {
 		mvp = mvp.multmat(view);
 		mvp = mvp.multmat(model);
 
+		// Parse .obj file
+		var obj = new ObjLoader(Assets.blobs.cube_obj.toString());
+		var data = obj.data;
+		var indices = obj.indices;
+
 		// Create vertex buffer
 		vertexBuffer = new VertexBuffer(
-			Std.int(vertices.length / 3), // Vertex count - 3 floats per vertex
+			Std.int(data.length / structureLength), // Vertex count
 			structure, // Vertex structure
 			Usage.StaticUsage // Vertex data will stay the same
 		);
-		
-		// Copy vertices and colors to vertex buffer
+
+		// Copy data to vertex buffer
 		var vbData = vertexBuffer.lock();
-		for (i in 0...Std.int(vbData.length / structureLength)) {
-			vbData.set(i * structureLength, vertices[i * 3]);
-			vbData.set(i * structureLength + 1, vertices[i * 3 + 1]);
-			vbData.set(i * structureLength + 2, vertices[i * 3 + 2]);
-			vbData.set(i * structureLength + 3, colors[i * 3]);
-			vbData.set(i * structureLength + 4, colors[i * 3 + 1]);
-			vbData.set(i * structureLength + 5, colors[i * 3 + 2]);
+		for (i in 0...vbData.length) {
+			vbData.set(i, data[i]);
 		}
 		vertexBuffer.unlock();
-
-		// A 'trick' to create indices for a non-indexed vertex data
-		var indices:Array<Int> = [];
-		for (i in 0...Std.int(vertices.length / 3)) {
-			indices.push(i);
-		}
 
 		// Create index buffer
 		indexBuffer = new IndexBuffer(
@@ -199,18 +147,27 @@ class Project {
 			iData[i] = indices[i];
 		}
 		indexBuffer.unlock();
+
+		// Add mouse and keyboard listeners
+		kha.input.Mouse.get().notify(onMouseDown, onMouseUp, onMouseMove, null);
+		kha.input.Keyboard.get().notify(onKeyDown, onKeyUp);
+
+		// Used to calculate delta time
+		lastTime = Scheduler.time();
+		
+		System.notifyOnRender(render);
+		Scheduler.addTimeTask(update, 0, 1 / 60);
     }
 
-	public function update():Void {
-		
-	}
+	public function render(frame:Framebuffer) {
+		// A graphics object which lets us perform 3D operations
+		var g = frame.g4;
 
-	public function render(framebuffer:Framebuffer):Void {
-		var g = framebuffer.g4;
-		
-		g.begin();
-		
-		g.clear(Color.fromFloats(0.0, 0.0, 0.3));
+		// Begin rendering
+        g.begin();
+
+        // Clear screen
+		g.clear(Color.fromFloats(0.0, 0.0, 0.3), 1.0);
 
 		// Bind data we want to draw
 		g.setVertexBuffer(vertexBuffer);
@@ -219,43 +176,111 @@ class Project {
 		// Bind state we want to draw with
 		g.setPipeline(pipeline);
 
-		// Send our transformation to the currently bound shader, in the "MVP" uniform
+		// Set our transformation to the currently bound shader, in the "MVP" uniform
 		g.setMatrix(mvpID, mvp);
+
+		// Set texture
+		g.setTexture(textureID, image);
 
 		// Draw!
 		g.drawIndexedVertices();
 
 		// End rendering
 		g.end();
-	}
-	
-	function onMouseDown(button:Int, x:Int, y:Int) {
-	isMouseDown = true;
-	}
+    }
 
-	function onMouseUp(button:Int, x:Int, y:Int) {
-	isMouseDown = false;
-	}
+    public function update() {
+    	// Compute time difference between current and last frame
+		var deltaTime = Scheduler.time() - lastTime;
+		lastTime = Scheduler.time();
 
-	function onMouseMove(x:Int, y:Int, movementX:Int, movementY:Int) {
-	mouseDeltaX = x - mouseX;
-	mouseDeltaY = y - mouseY;
+		// Compute new orientation
+		if (isMouseDown) {
+			horizontalAngle += mouseSpeed * mouseDeltaX * -1;
+			verticalAngle += mouseSpeed * mouseDeltaY * -1;
+		}
 
-	mouseX = x;
-	mouseY = y;
-	}
+		// Direction : Spherical coordinates to Cartesian coordinates conversion
+		var direction = new FastVector3(
+			Math.cos(verticalAngle) * Math.sin(horizontalAngle),
+			Math.sin(verticalAngle),
+			Math.cos(verticalAngle) * Math.cos(horizontalAngle)
+		);
+		
+		// Right vector
+		var right = new FastVector3(
+			Math.sin(horizontalAngle - 3.14 / 2.0), 
+			0,
+			Math.cos(horizontalAngle - 3.14 / 2.0)
+		);
+		
+		// Up vector
+		var up = right.cross(direction);
 
-	function onKeyDown(key:Key, char:String) {
-	if (key == Key.UP) moveForward = true;
-	else if (key == Key.DOWN) moveBackward = true;
-	else if (key == Key.LEFT) strafeLeft = true;
-	else if (key == Key.RIGHT) strafeRight = true;
-	}
+		// Movement
+		if (moveForward) {
+			var v = direction.mult(deltaTime * speed);
+			position = position.add(v);
+		}
+		if (moveBackward) {
+			var v = direction.mult(deltaTime * speed * -1);
+			position = position.add(v);
+		}
+		if (strafeRight) {
+			var v = right.mult(deltaTime * speed);
+			position = position.add(v);
+		}
+		if (strafeLeft) {
+			var v = right.mult(deltaTime * speed * -1);
+			position = position.add(v);
+		}
 
-	function onKeyUp(key:Key, char:String) {
-	if (key == Key.UP) moveForward = false;
-	else if (key == Key.DOWN) moveBackward = false;
-	else if (key == Key.LEFT) strafeLeft = false;
-	else if (key == Key.RIGHT) strafeRight = false;
-	}
+		// Look vector
+		var look = position.add(direction);
+		
+		// Camera matrix
+		view = FastMatrix4.lookAt(position, // Camera is here
+							  look, // and looks here : at the same position, plus "direction"
+							  up // Head is up (set to (0, -1, 0) to look upside-down)
+		);
+		
+		// Update model-view-projection matrix
+		mvp = FastMatrix4.identity();
+		mvp = mvp.multmat(projection);
+		mvp = mvp.multmat(view);
+		mvp = mvp.multmat(model);
+
+		mouseDeltaX = 0;
+		mouseDeltaY = 0;
+    }
+
+    function onMouseDown(button:Int, x:Int, y:Int) {
+    	isMouseDown = true;
+    }
+
+    function onMouseUp(button:Int, x:Int, y:Int) {
+    	isMouseDown = false;
+    }
+
+    function onMouseMove(x:Int, y:Int, movementX:Int, movementY:Int) {
+    	mouseDeltaX = x - mouseX;
+    	mouseDeltaY = y - mouseY;
+
+    	mouseX = x;
+    	mouseY = y;
+    }
+
+    function onKeyDown(key:Key, char:String) {
+        if (key == Key.UP || char == "w") moveForward = true;
+        else if (key == Key.DOWN || char == "s") moveBackward = true;
+        else if (key == Key.LEFT || char == "a") strafeLeft = true;
+        else if (key == Key.RIGHT || char == "d") strafeRight = true;
+    }
+
+    function onKeyUp(key:Key, char:String) {
+        if (key == Key.UP || char == "w") moveForward = false;
+        else if (key == Key.DOWN || char == "s") moveBackward = false;
+        else if (key == Key.LEFT || char == "a") strafeLeft = false;
+        else if (key == Key.RIGHT || char == "d") strafeRight = false;
+    }
 }

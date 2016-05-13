@@ -189,70 +189,148 @@ Main.main = function() {
 	});
 };
 Math.__name__ = true;
-var Project = function() {
-	var structure = new kha_graphics4_VertexStructure();
-	structure.add("pos",kha_graphics4_VertexData.Float3);
-	structure.add("col",kha_graphics4_VertexData.Float3);
-	this.pipeline = new kha_graphics4_PipelineState();
-	this.pipeline.inputLayout = [structure];
-	this.pipeline.fragmentShader = kha_Shaders.simple_frag;
-	this.pipeline.vertexShader = kha_Shaders.simple_vert;
-	this.pipeline.depthWrite = true;
-	this.pipeline.depthMode = kha_graphics4_CompareMode.Less;
-	this.pipeline.compile();
-	this.mvpID = this.pipeline.getConstantLocation("MVP");
-	var projection = kha_math_FastMatrix4.perspectiveProjection(45.0,1.33333333333333326,0.1,100.0);
-	var view = kha_math_FastMatrix4.lookAt(new kha_math_FastVector3(4,3,3),new kha_math_FastVector3(0,0,0),new kha_math_FastVector3(0,1,0));
-	var model__00 = 1;
-	var model__10 = 0;
-	var model__20 = 0;
-	var model__30 = 0;
-	var model__01 = 0;
-	var model__11 = 1;
-	var model__21 = 0;
-	var model__31 = 0;
-	var model__02 = 0;
-	var model__12 = 0;
-	var model__22 = 1;
-	var model__32 = 0;
-	var model__03 = 0;
-	var model__13 = 0;
-	var model__23 = 0;
-	var model__33 = 1;
-	this.mvp = new kha_math_FastMatrix4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
-	var _this = this.mvp;
-	this.mvp = new kha_math_FastMatrix4(_this._00 * projection._00 + _this._10 * projection._01 + _this._20 * projection._02 + _this._30 * projection._03,_this._00 * projection._10 + _this._10 * projection._11 + _this._20 * projection._12 + _this._30 * projection._13,_this._00 * projection._20 + _this._10 * projection._21 + _this._20 * projection._22 + _this._30 * projection._23,_this._00 * projection._30 + _this._10 * projection._31 + _this._20 * projection._32 + _this._30 * projection._33,_this._01 * projection._00 + _this._11 * projection._01 + _this._21 * projection._02 + _this._31 * projection._03,_this._01 * projection._10 + _this._11 * projection._11 + _this._21 * projection._12 + _this._31 * projection._13,_this._01 * projection._20 + _this._11 * projection._21 + _this._21 * projection._22 + _this._31 * projection._23,_this._01 * projection._30 + _this._11 * projection._31 + _this._21 * projection._32 + _this._31 * projection._33,_this._02 * projection._00 + _this._12 * projection._01 + _this._22 * projection._02 + _this._32 * projection._03,_this._02 * projection._10 + _this._12 * projection._11 + _this._22 * projection._12 + _this._32 * projection._13,_this._02 * projection._20 + _this._12 * projection._21 + _this._22 * projection._22 + _this._32 * projection._23,_this._02 * projection._30 + _this._12 * projection._31 + _this._22 * projection._32 + _this._32 * projection._33,_this._03 * projection._00 + _this._13 * projection._01 + _this._23 * projection._02 + _this._33 * projection._03,_this._03 * projection._10 + _this._13 * projection._11 + _this._23 * projection._12 + _this._33 * projection._13,_this._03 * projection._20 + _this._13 * projection._21 + _this._23 * projection._22 + _this._33 * projection._23,_this._03 * projection._30 + _this._13 * projection._31 + _this._23 * projection._32 + _this._33 * projection._33);
-	var _this1 = this.mvp;
-	this.mvp = new kha_math_FastMatrix4(_this1._00 * view._00 + _this1._10 * view._01 + _this1._20 * view._02 + _this1._30 * view._03,_this1._00 * view._10 + _this1._10 * view._11 + _this1._20 * view._12 + _this1._30 * view._13,_this1._00 * view._20 + _this1._10 * view._21 + _this1._20 * view._22 + _this1._30 * view._23,_this1._00 * view._30 + _this1._10 * view._31 + _this1._20 * view._32 + _this1._30 * view._33,_this1._01 * view._00 + _this1._11 * view._01 + _this1._21 * view._02 + _this1._31 * view._03,_this1._01 * view._10 + _this1._11 * view._11 + _this1._21 * view._12 + _this1._31 * view._13,_this1._01 * view._20 + _this1._11 * view._21 + _this1._21 * view._22 + _this1._31 * view._23,_this1._01 * view._30 + _this1._11 * view._31 + _this1._21 * view._32 + _this1._31 * view._33,_this1._02 * view._00 + _this1._12 * view._01 + _this1._22 * view._02 + _this1._32 * view._03,_this1._02 * view._10 + _this1._12 * view._11 + _this1._22 * view._12 + _this1._32 * view._13,_this1._02 * view._20 + _this1._12 * view._21 + _this1._22 * view._22 + _this1._32 * view._23,_this1._02 * view._30 + _this1._12 * view._31 + _this1._22 * view._32 + _this1._32 * view._33,_this1._03 * view._00 + _this1._13 * view._01 + _this1._23 * view._02 + _this1._33 * view._03,_this1._03 * view._10 + _this1._13 * view._11 + _this1._23 * view._12 + _this1._33 * view._13,_this1._03 * view._20 + _this1._13 * view._21 + _this1._23 * view._22 + _this1._33 * view._23,_this1._03 * view._30 + _this1._13 * view._31 + _this1._23 * view._32 + _this1._33 * view._33);
-	var _this2 = this.mvp;
-	this.mvp = new kha_math_FastMatrix4(_this2._00 * model__00 + _this2._10 * model__01 + _this2._20 * model__02 + _this2._30 * model__03,_this2._00 * model__10 + _this2._10 * model__11 + _this2._20 * model__12 + _this2._30 * model__13,_this2._00 * model__20 + _this2._10 * model__21 + _this2._20 * model__22 + _this2._30 * model__23,_this2._00 * model__30 + _this2._10 * model__31 + _this2._20 * model__32 + _this2._30 * model__33,_this2._01 * model__00 + _this2._11 * model__01 + _this2._21 * model__02 + _this2._31 * model__03,_this2._01 * model__10 + _this2._11 * model__11 + _this2._21 * model__12 + _this2._31 * model__13,_this2._01 * model__20 + _this2._11 * model__21 + _this2._21 * model__22 + _this2._31 * model__23,_this2._01 * model__30 + _this2._11 * model__31 + _this2._21 * model__32 + _this2._31 * model__33,_this2._02 * model__00 + _this2._12 * model__01 + _this2._22 * model__02 + _this2._32 * model__03,_this2._02 * model__10 + _this2._12 * model__11 + _this2._22 * model__12 + _this2._32 * model__13,_this2._02 * model__20 + _this2._12 * model__21 + _this2._22 * model__22 + _this2._32 * model__23,_this2._02 * model__30 + _this2._12 * model__31 + _this2._22 * model__32 + _this2._32 * model__33,_this2._03 * model__00 + _this2._13 * model__01 + _this2._23 * model__02 + _this2._33 * model__03,_this2._03 * model__10 + _this2._13 * model__11 + _this2._23 * model__12 + _this2._33 * model__13,_this2._03 * model__20 + _this2._13 * model__21 + _this2._23 * model__22 + _this2._33 * model__23,_this2._03 * model__30 + _this2._13 * model__31 + _this2._23 * model__32 + _this2._33 * model__33);
-	this.vertexBuffer = new kha_graphics4_VertexBuffer(Project.vertices.length / 3 | 0,structure,kha_graphics4_Usage.StaticUsage);
-	var vbData = this.vertexBuffer.lock();
+var ObjLoader = function(objData) {
+	var vertices = [];
+	var uvs = [];
+	var normals = [];
+	var vertexIndices = [];
+	var uvIndices = [];
+	var normalIndices = [];
+	var tempVertices = [];
+	var tempUVs = [];
+	var tempNormals = [];
+	var lines = objData.split("\n");
 	var _g1 = 0;
-	var _g = vbData.length / 6 | 0;
+	var _g = lines.length;
 	while(_g1 < _g) {
-		var i = _g1++;
-		vbData[i * 6] = Project.vertices[i * 3];
-		vbData[i * 6 + 1] = Project.vertices[i * 3 + 1];
-		vbData[i * 6 + 2] = Project.vertices[i * 3 + 2];
-		vbData[i * 6 + 3] = Project.colors[i * 3];
-		vbData[i * 6 + 4] = Project.colors[i * 3 + 1];
-		vbData[i * 6 + 5] = Project.colors[i * 3 + 2];
+		var words = lines[_g1++].split(" ");
+		if(words[0] == "v") {
+			var vector = [];
+			vector.push(parseFloat(words[1]));
+			vector.push(parseFloat(words[2]));
+			vector.push(parseFloat(words[3]));
+			tempVertices.push(vector);
+		} else if(words[0] == "vt") {
+			var vector1 = [];
+			vector1.push(parseFloat(words[1]));
+			vector1.push(parseFloat(words[2]));
+			tempUVs.push(vector1);
+		} else if(words[0] == "vn") {
+			var vector2 = [];
+			vector2.push(parseFloat(words[1]));
+			vector2.push(parseFloat(words[2]));
+			vector2.push(parseFloat(words[3]));
+			tempNormals.push(vector2);
+		} else if(words[0] == "f") {
+			var sec1 = words[1].split("/");
+			var sec2 = words[2].split("/");
+			var sec3 = words[3].split("/");
+			vertexIndices.push(parseFloat(sec1[0]) | 0);
+			vertexIndices.push(parseFloat(sec2[0]) | 0);
+			vertexIndices.push(parseFloat(sec3[0]) | 0);
+			uvIndices.push(parseFloat(sec1[1]) | 0);
+			uvIndices.push(parseFloat(sec2[1]) | 0);
+			uvIndices.push(parseFloat(sec3[1]) | 0);
+			normalIndices.push(parseFloat(sec1[2]) | 0);
+			normalIndices.push(parseFloat(sec2[2]) | 0);
+			normalIndices.push(parseFloat(sec3[2]) | 0);
+		}
 	}
-	this.vertexBuffer.unlock();
-	var indices = [];
 	var _g11 = 0;
-	var _g2 = Project.vertices.length / 3 | 0;
-	while(_g11 < _g2) indices.push(_g11++);
-	this.indexBuffer = new kha_graphics4_IndexBuffer(indices.length,kha_graphics4_Usage.StaticUsage);
-	var iData = this.indexBuffer.lock();
+	var _g2 = vertexIndices.length;
+	while(_g11 < _g2) {
+		var i = _g11++;
+		var vertex = tempVertices[vertexIndices[i] - 1];
+		var uv = tempUVs[uvIndices[i] - 1];
+		var normal = tempNormals[normalIndices[i] - 1];
+		vertices.push(vertex[0]);
+		vertices.push(vertex[1]);
+		vertices.push(vertex[2]);
+		uvs.push(uv[0]);
+		uvs.push(uv[1]);
+		normals.push(normal[0]);
+		normals.push(normal[1]);
+		normals.push(normal[2]);
+	}
+	this.build(vertices,uvs,normals);
+	this.data = [];
 	var _g12 = 0;
-	var _g3 = iData.length;
+	var _g3 = vertices.length / 3 | 0;
 	while(_g12 < _g3) {
 		var i1 = _g12++;
-		iData[i1] = indices[i1];
+		this.data.push(ObjLoader.indexedVertices[i1 * 3]);
+		this.data.push(ObjLoader.indexedVertices[i1 * 3 + 1]);
+		this.data.push(ObjLoader.indexedVertices[i1 * 3 + 2]);
+		this.data.push(ObjLoader.indexedUVs[i1 * 2]);
+		this.data.push(1 - ObjLoader.indexedUVs[i1 * 2 + 1]);
+		this.data.push(ObjLoader.indexedNormals[i1 * 3]);
+		this.data.push(ObjLoader.indexedNormals[i1 * 3 + 1]);
+		this.data.push(ObjLoader.indexedNormals[i1 * 3 + 2]);
 	}
-	this.indexBuffer.unlock();
+};
+$hxClasses["ObjLoader"] = ObjLoader;
+ObjLoader.__name__ = true;
+ObjLoader.prototype = {
+	data: null
+	,indices: null
+	,build: function(vertices,uvs,normals) {
+		ObjLoader.indexedVertices = [];
+		ObjLoader.indexedUVs = [];
+		ObjLoader.indexedNormals = [];
+		this.indices = [];
+		var _g1 = 0;
+		var _g = vertices.length / 3 | 0;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.getSimilarVertexIndex(vertices[i * 3],vertices[i * 3 + 1],vertices[i * 3 + 2],uvs[i * 2],uvs[i * 2 + 1],normals[i * 3],normals[i * 3 + 1],normals[i * 3 + 2])) {
+				this.indices.push(ObjLoader.index);
+			} else {
+				ObjLoader.indexedVertices.push(vertices[i * 3]);
+				ObjLoader.indexedVertices.push(vertices[i * 3 + 1]);
+				ObjLoader.indexedVertices.push(vertices[i * 3 + 2]);
+				ObjLoader.indexedUVs.push(uvs[i * 2]);
+				ObjLoader.indexedUVs.push(uvs[i * 2 + 1]);
+				ObjLoader.indexedNormals.push(normals[i * 3]);
+				ObjLoader.indexedNormals.push(normals[i * 3 + 1]);
+				ObjLoader.indexedNormals.push(normals[i * 3 + 2]);
+				this.indices.push((ObjLoader.indexedVertices.length / 3 | 0) - 1);
+			}
+		}
+	}
+	,isNear: function(v1,v2) {
+		return Math.abs(v1 - v2) < 0.01;
+	}
+	,getSimilarVertexIndex: function(vertexX,vertexY,vertexZ,uvX,uvY,normalX,normalY,normalZ) {
+		var _g1 = 0;
+		var _g = ObjLoader.indexedVertices.length / 3 | 0;
+		while(_g1 < _g) {
+			var i = _g1++;
+			if(this.isNear(vertexX,ObjLoader.indexedVertices[i * 3]) && this.isNear(vertexY,ObjLoader.indexedVertices[i * 3 + 1]) && this.isNear(vertexZ,ObjLoader.indexedVertices[i * 3 + 2]) && this.isNear(uvX,ObjLoader.indexedUVs[i * 2]) && this.isNear(uvY,ObjLoader.indexedUVs[i * 2 + 1]) && this.isNear(normalX,ObjLoader.indexedNormals[i * 3]) && this.isNear(normalY,ObjLoader.indexedNormals[i * 3 + 1]) && this.isNear(normalZ,ObjLoader.indexedNormals[i * 3 + 2])) {
+				ObjLoader.index = i;
+				return true;
+			}
+		}
+		return false;
+	}
+	,__class__: ObjLoader
+};
+var Project = function() {
+	this.mouseSpeed = 0.005;
+	this.speed = 3.0;
+	this.mouseDeltaY = 0.0;
+	this.mouseDeltaX = 0.0;
+	this.mouseY = 0.0;
+	this.mouseX = 0.0;
+	this.isMouseDown = false;
+	this.strafeRight = false;
+	this.strafeLeft = false;
+	this.moveBackward = false;
+	this.moveForward = false;
+	this.verticalAngle = 0.0;
+	this.horizontalAngle = 3.14;
+	this.position = new kha_math_FastVector3(0,0,5);
+	this.lastTime = 0.0;
+	kha_Assets.loadEverything($bind(this,this.loadingFinished));
 };
 $hxClasses["Project"] = Project;
 Project.__name__ = true;
@@ -262,18 +340,188 @@ Project.prototype = {
 	,pipeline: null
 	,mvp: null
 	,mvpID: null
-	,update: function() {
+	,model: null
+	,view: null
+	,projection: null
+	,textureID: null
+	,image: null
+	,lastTime: null
+	,position: null
+	,horizontalAngle: null
+	,verticalAngle: null
+	,moveForward: null
+	,moveBackward: null
+	,strafeLeft: null
+	,strafeRight: null
+	,isMouseDown: null
+	,mouseX: null
+	,mouseY: null
+	,mouseDeltaX: null
+	,mouseDeltaY: null
+	,speed: null
+	,mouseSpeed: null
+	,loadingFinished: function() {
+		var structure = new kha_graphics4_VertexStructure();
+		structure.add("pos",kha_graphics4_VertexData.Float3);
+		structure.add("uv",kha_graphics4_VertexData.Float2);
+		structure.add("nor",kha_graphics4_VertexData.Float3);
+		this.pipeline = new kha_graphics4_PipelineState();
+		this.pipeline.inputLayout = [structure];
+		this.pipeline.vertexShader = kha_Shaders.simple_vert;
+		this.pipeline.fragmentShader = kha_Shaders.simple_frag;
+		this.pipeline.depthWrite = true;
+		this.pipeline.depthMode = kha_graphics4_CompareMode.Less;
+		this.pipeline.cullMode = kha_graphics4_CullMode.CounterClockwise;
+		this.pipeline.compile();
+		this.mvpID = this.pipeline.getConstantLocation("MVP");
+		this.textureID = this.pipeline.getTextureUnit("myTextureSampler");
+		this.image = kha_Assets.images.uvmap;
+		this.projection = kha_math_FastMatrix4.perspectiveProjection(45.0,1.33333333333333326,0.1,100.0);
+		this.view = kha_math_FastMatrix4.lookAt(new kha_math_FastVector3(4,3,3),new kha_math_FastVector3(0,0,0),new kha_math_FastVector3(0,1,0));
+		this.model = new kha_math_FastMatrix4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+		this.mvp = new kha_math_FastMatrix4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+		var _this = this.mvp;
+		var m = this.projection;
+		this.mvp = new kha_math_FastMatrix4(_this._00 * m._00 + _this._10 * m._01 + _this._20 * m._02 + _this._30 * m._03,_this._00 * m._10 + _this._10 * m._11 + _this._20 * m._12 + _this._30 * m._13,_this._00 * m._20 + _this._10 * m._21 + _this._20 * m._22 + _this._30 * m._23,_this._00 * m._30 + _this._10 * m._31 + _this._20 * m._32 + _this._30 * m._33,_this._01 * m._00 + _this._11 * m._01 + _this._21 * m._02 + _this._31 * m._03,_this._01 * m._10 + _this._11 * m._11 + _this._21 * m._12 + _this._31 * m._13,_this._01 * m._20 + _this._11 * m._21 + _this._21 * m._22 + _this._31 * m._23,_this._01 * m._30 + _this._11 * m._31 + _this._21 * m._32 + _this._31 * m._33,_this._02 * m._00 + _this._12 * m._01 + _this._22 * m._02 + _this._32 * m._03,_this._02 * m._10 + _this._12 * m._11 + _this._22 * m._12 + _this._32 * m._13,_this._02 * m._20 + _this._12 * m._21 + _this._22 * m._22 + _this._32 * m._23,_this._02 * m._30 + _this._12 * m._31 + _this._22 * m._32 + _this._32 * m._33,_this._03 * m._00 + _this._13 * m._01 + _this._23 * m._02 + _this._33 * m._03,_this._03 * m._10 + _this._13 * m._11 + _this._23 * m._12 + _this._33 * m._13,_this._03 * m._20 + _this._13 * m._21 + _this._23 * m._22 + _this._33 * m._23,_this._03 * m._30 + _this._13 * m._31 + _this._23 * m._32 + _this._33 * m._33);
+		var _this1 = this.mvp;
+		var m1 = this.view;
+		this.mvp = new kha_math_FastMatrix4(_this1._00 * m1._00 + _this1._10 * m1._01 + _this1._20 * m1._02 + _this1._30 * m1._03,_this1._00 * m1._10 + _this1._10 * m1._11 + _this1._20 * m1._12 + _this1._30 * m1._13,_this1._00 * m1._20 + _this1._10 * m1._21 + _this1._20 * m1._22 + _this1._30 * m1._23,_this1._00 * m1._30 + _this1._10 * m1._31 + _this1._20 * m1._32 + _this1._30 * m1._33,_this1._01 * m1._00 + _this1._11 * m1._01 + _this1._21 * m1._02 + _this1._31 * m1._03,_this1._01 * m1._10 + _this1._11 * m1._11 + _this1._21 * m1._12 + _this1._31 * m1._13,_this1._01 * m1._20 + _this1._11 * m1._21 + _this1._21 * m1._22 + _this1._31 * m1._23,_this1._01 * m1._30 + _this1._11 * m1._31 + _this1._21 * m1._32 + _this1._31 * m1._33,_this1._02 * m1._00 + _this1._12 * m1._01 + _this1._22 * m1._02 + _this1._32 * m1._03,_this1._02 * m1._10 + _this1._12 * m1._11 + _this1._22 * m1._12 + _this1._32 * m1._13,_this1._02 * m1._20 + _this1._12 * m1._21 + _this1._22 * m1._22 + _this1._32 * m1._23,_this1._02 * m1._30 + _this1._12 * m1._31 + _this1._22 * m1._32 + _this1._32 * m1._33,_this1._03 * m1._00 + _this1._13 * m1._01 + _this1._23 * m1._02 + _this1._33 * m1._03,_this1._03 * m1._10 + _this1._13 * m1._11 + _this1._23 * m1._12 + _this1._33 * m1._13,_this1._03 * m1._20 + _this1._13 * m1._21 + _this1._23 * m1._22 + _this1._33 * m1._23,_this1._03 * m1._30 + _this1._13 * m1._31 + _this1._23 * m1._32 + _this1._33 * m1._33);
+		var _this2 = this.mvp;
+		var m2 = this.model;
+		this.mvp = new kha_math_FastMatrix4(_this2._00 * m2._00 + _this2._10 * m2._01 + _this2._20 * m2._02 + _this2._30 * m2._03,_this2._00 * m2._10 + _this2._10 * m2._11 + _this2._20 * m2._12 + _this2._30 * m2._13,_this2._00 * m2._20 + _this2._10 * m2._21 + _this2._20 * m2._22 + _this2._30 * m2._23,_this2._00 * m2._30 + _this2._10 * m2._31 + _this2._20 * m2._32 + _this2._30 * m2._33,_this2._01 * m2._00 + _this2._11 * m2._01 + _this2._21 * m2._02 + _this2._31 * m2._03,_this2._01 * m2._10 + _this2._11 * m2._11 + _this2._21 * m2._12 + _this2._31 * m2._13,_this2._01 * m2._20 + _this2._11 * m2._21 + _this2._21 * m2._22 + _this2._31 * m2._23,_this2._01 * m2._30 + _this2._11 * m2._31 + _this2._21 * m2._32 + _this2._31 * m2._33,_this2._02 * m2._00 + _this2._12 * m2._01 + _this2._22 * m2._02 + _this2._32 * m2._03,_this2._02 * m2._10 + _this2._12 * m2._11 + _this2._22 * m2._12 + _this2._32 * m2._13,_this2._02 * m2._20 + _this2._12 * m2._21 + _this2._22 * m2._22 + _this2._32 * m2._23,_this2._02 * m2._30 + _this2._12 * m2._31 + _this2._22 * m2._32 + _this2._32 * m2._33,_this2._03 * m2._00 + _this2._13 * m2._01 + _this2._23 * m2._02 + _this2._33 * m2._03,_this2._03 * m2._10 + _this2._13 * m2._11 + _this2._23 * m2._12 + _this2._33 * m2._13,_this2._03 * m2._20 + _this2._13 * m2._21 + _this2._23 * m2._22 + _this2._33 * m2._23,_this2._03 * m2._30 + _this2._13 * m2._31 + _this2._23 * m2._32 + _this2._33 * m2._33);
+		var obj = new ObjLoader(kha_Assets.blobs.cube_obj.toString());
+		var data = obj.data;
+		var indices = obj.indices;
+		this.vertexBuffer = new kha_graphics4_VertexBuffer(data.length / 8 | 0,structure,kha_graphics4_Usage.StaticUsage);
+		var vbData = this.vertexBuffer.lock();
+		var _g1 = 0;
+		var _g = vbData.length;
+		while(_g1 < _g) {
+			var i = _g1++;
+			vbData[i] = data[i];
+		}
+		this.vertexBuffer.unlock();
+		this.indexBuffer = new kha_graphics4_IndexBuffer(indices.length,kha_graphics4_Usage.StaticUsage);
+		var iData = this.indexBuffer.lock();
+		var _g11 = 0;
+		var _g2 = iData.length;
+		while(_g11 < _g2) {
+			var i1 = _g11++;
+			iData[i1] = indices[i1];
+		}
+		this.indexBuffer.unlock();
+		kha_input_Mouse.get().notify($bind(this,this.onMouseDown),$bind(this,this.onMouseUp),$bind(this,this.onMouseMove),null);
+		kha_input_Keyboard.get().notify($bind(this,this.onKeyDown),$bind(this,this.onKeyUp));
+		this.lastTime = kha_Scheduler.time();
+		kha_System.notifyOnRender($bind(this,this.render));
+		kha_Scheduler.addTimeTask($bind(this,this.update),0,0.0166666666666666664);
 	}
-	,render: function(framebuffer) {
-		var g = framebuffer.get_g4();
+	,render: function(frame) {
+		var g = frame.get_g4();
 		g.begin();
-		g.clear(kha__$Color_Color_$Impl_$.fromFloats(0.0,0.0,0.3));
+		g.clear(kha__$Color_Color_$Impl_$.fromFloats(0.0,0.0,0.3),1.0);
 		g.setVertexBuffer(this.vertexBuffer);
 		g.setIndexBuffer(this.indexBuffer);
 		g.setPipeline(this.pipeline);
 		g.setMatrix(this.mvpID,this.mvp);
+		g.setTexture(this.textureID,this.image);
 		g.drawIndexedVertices();
 		g.end();
+	}
+	,update: function() {
+		var deltaTime = kha_Scheduler.time() - this.lastTime;
+		this.lastTime = kha_Scheduler.time();
+		if(this.isMouseDown) {
+			this.horizontalAngle += this.mouseSpeed * this.mouseDeltaX * -1;
+			this.verticalAngle += this.mouseSpeed * this.mouseDeltaY * -1;
+		}
+		var x = Math.cos(this.verticalAngle) * Math.sin(this.horizontalAngle);
+		var y = Math.sin(this.verticalAngle);
+		var z = Math.cos(this.verticalAngle) * Math.cos(this.horizontalAngle);
+		var x1 = Math.sin(this.horizontalAngle - 1.57);
+		var z1 = Math.cos(this.horizontalAngle - 1.57);
+		var right_y = 0;
+		var up = new kha_math_FastVector3(right_y * z - z1 * y,z1 * x - x1 * z,x1 * y - right_y * x);
+		if(this.moveForward) {
+			var value = deltaTime * this.speed;
+			var x2 = x * value;
+			var y1 = y * value;
+			var z2 = z * value;
+			var _this = this.position;
+			this.position = new kha_math_FastVector3(_this.x + x2,_this.y + y1,_this.z + z2);
+		}
+		if(this.moveBackward) {
+			var value1 = deltaTime * this.speed * -1;
+			var x3 = x * value1;
+			var y2 = y * value1;
+			var z3 = z * value1;
+			var _this1 = this.position;
+			this.position = new kha_math_FastVector3(_this1.x + x3,_this1.y + y2,_this1.z + z3);
+		}
+		if(this.strafeRight) {
+			var value2 = deltaTime * this.speed;
+			var x4 = x1 * value2;
+			var y3 = right_y * value2;
+			var z4 = z1 * value2;
+			var _this2 = this.position;
+			this.position = new kha_math_FastVector3(_this2.x + x4,_this2.y + y3,_this2.z + z4);
+		}
+		if(this.strafeLeft) {
+			var value3 = deltaTime * this.speed * -1;
+			var x5 = x1 * value3;
+			var y4 = right_y * value3;
+			var z5 = z1 * value3;
+			var _this3 = this.position;
+			this.position = new kha_math_FastVector3(_this3.x + x5,_this3.y + y4,_this3.z + z5);
+		}
+		var _this4 = this.position;
+		this.view = kha_math_FastMatrix4.lookAt(this.position,new kha_math_FastVector3(_this4.x + x,_this4.y + y,_this4.z + z),up);
+		this.mvp = new kha_math_FastMatrix4(1,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1);
+		var _this5 = this.mvp;
+		var m = this.projection;
+		this.mvp = new kha_math_FastMatrix4(_this5._00 * m._00 + _this5._10 * m._01 + _this5._20 * m._02 + _this5._30 * m._03,_this5._00 * m._10 + _this5._10 * m._11 + _this5._20 * m._12 + _this5._30 * m._13,_this5._00 * m._20 + _this5._10 * m._21 + _this5._20 * m._22 + _this5._30 * m._23,_this5._00 * m._30 + _this5._10 * m._31 + _this5._20 * m._32 + _this5._30 * m._33,_this5._01 * m._00 + _this5._11 * m._01 + _this5._21 * m._02 + _this5._31 * m._03,_this5._01 * m._10 + _this5._11 * m._11 + _this5._21 * m._12 + _this5._31 * m._13,_this5._01 * m._20 + _this5._11 * m._21 + _this5._21 * m._22 + _this5._31 * m._23,_this5._01 * m._30 + _this5._11 * m._31 + _this5._21 * m._32 + _this5._31 * m._33,_this5._02 * m._00 + _this5._12 * m._01 + _this5._22 * m._02 + _this5._32 * m._03,_this5._02 * m._10 + _this5._12 * m._11 + _this5._22 * m._12 + _this5._32 * m._13,_this5._02 * m._20 + _this5._12 * m._21 + _this5._22 * m._22 + _this5._32 * m._23,_this5._02 * m._30 + _this5._12 * m._31 + _this5._22 * m._32 + _this5._32 * m._33,_this5._03 * m._00 + _this5._13 * m._01 + _this5._23 * m._02 + _this5._33 * m._03,_this5._03 * m._10 + _this5._13 * m._11 + _this5._23 * m._12 + _this5._33 * m._13,_this5._03 * m._20 + _this5._13 * m._21 + _this5._23 * m._22 + _this5._33 * m._23,_this5._03 * m._30 + _this5._13 * m._31 + _this5._23 * m._32 + _this5._33 * m._33);
+		var _this6 = this.mvp;
+		var m1 = this.view;
+		this.mvp = new kha_math_FastMatrix4(_this6._00 * m1._00 + _this6._10 * m1._01 + _this6._20 * m1._02 + _this6._30 * m1._03,_this6._00 * m1._10 + _this6._10 * m1._11 + _this6._20 * m1._12 + _this6._30 * m1._13,_this6._00 * m1._20 + _this6._10 * m1._21 + _this6._20 * m1._22 + _this6._30 * m1._23,_this6._00 * m1._30 + _this6._10 * m1._31 + _this6._20 * m1._32 + _this6._30 * m1._33,_this6._01 * m1._00 + _this6._11 * m1._01 + _this6._21 * m1._02 + _this6._31 * m1._03,_this6._01 * m1._10 + _this6._11 * m1._11 + _this6._21 * m1._12 + _this6._31 * m1._13,_this6._01 * m1._20 + _this6._11 * m1._21 + _this6._21 * m1._22 + _this6._31 * m1._23,_this6._01 * m1._30 + _this6._11 * m1._31 + _this6._21 * m1._32 + _this6._31 * m1._33,_this6._02 * m1._00 + _this6._12 * m1._01 + _this6._22 * m1._02 + _this6._32 * m1._03,_this6._02 * m1._10 + _this6._12 * m1._11 + _this6._22 * m1._12 + _this6._32 * m1._13,_this6._02 * m1._20 + _this6._12 * m1._21 + _this6._22 * m1._22 + _this6._32 * m1._23,_this6._02 * m1._30 + _this6._12 * m1._31 + _this6._22 * m1._32 + _this6._32 * m1._33,_this6._03 * m1._00 + _this6._13 * m1._01 + _this6._23 * m1._02 + _this6._33 * m1._03,_this6._03 * m1._10 + _this6._13 * m1._11 + _this6._23 * m1._12 + _this6._33 * m1._13,_this6._03 * m1._20 + _this6._13 * m1._21 + _this6._23 * m1._22 + _this6._33 * m1._23,_this6._03 * m1._30 + _this6._13 * m1._31 + _this6._23 * m1._32 + _this6._33 * m1._33);
+		var _this7 = this.mvp;
+		var m2 = this.model;
+		this.mvp = new kha_math_FastMatrix4(_this7._00 * m2._00 + _this7._10 * m2._01 + _this7._20 * m2._02 + _this7._30 * m2._03,_this7._00 * m2._10 + _this7._10 * m2._11 + _this7._20 * m2._12 + _this7._30 * m2._13,_this7._00 * m2._20 + _this7._10 * m2._21 + _this7._20 * m2._22 + _this7._30 * m2._23,_this7._00 * m2._30 + _this7._10 * m2._31 + _this7._20 * m2._32 + _this7._30 * m2._33,_this7._01 * m2._00 + _this7._11 * m2._01 + _this7._21 * m2._02 + _this7._31 * m2._03,_this7._01 * m2._10 + _this7._11 * m2._11 + _this7._21 * m2._12 + _this7._31 * m2._13,_this7._01 * m2._20 + _this7._11 * m2._21 + _this7._21 * m2._22 + _this7._31 * m2._23,_this7._01 * m2._30 + _this7._11 * m2._31 + _this7._21 * m2._32 + _this7._31 * m2._33,_this7._02 * m2._00 + _this7._12 * m2._01 + _this7._22 * m2._02 + _this7._32 * m2._03,_this7._02 * m2._10 + _this7._12 * m2._11 + _this7._22 * m2._12 + _this7._32 * m2._13,_this7._02 * m2._20 + _this7._12 * m2._21 + _this7._22 * m2._22 + _this7._32 * m2._23,_this7._02 * m2._30 + _this7._12 * m2._31 + _this7._22 * m2._32 + _this7._32 * m2._33,_this7._03 * m2._00 + _this7._13 * m2._01 + _this7._23 * m2._02 + _this7._33 * m2._03,_this7._03 * m2._10 + _this7._13 * m2._11 + _this7._23 * m2._12 + _this7._33 * m2._13,_this7._03 * m2._20 + _this7._13 * m2._21 + _this7._23 * m2._22 + _this7._33 * m2._23,_this7._03 * m2._30 + _this7._13 * m2._31 + _this7._23 * m2._32 + _this7._33 * m2._33);
+		this.mouseDeltaX = 0;
+		this.mouseDeltaY = 0;
+	}
+	,onMouseDown: function(button,x,y) {
+		this.isMouseDown = true;
+	}
+	,onMouseUp: function(button,x,y) {
+		this.isMouseDown = false;
+	}
+	,onMouseMove: function(x,y,movementX,movementY) {
+		this.mouseDeltaX = x - this.mouseX;
+		this.mouseDeltaY = y - this.mouseY;
+		this.mouseX = x;
+		this.mouseY = y;
+	}
+	,onKeyDown: function(key,$char) {
+		if(key == kha_Key.UP || $char == "w") {
+			this.moveForward = true;
+		} else if(key == kha_Key.DOWN || $char == "s") {
+			this.moveBackward = true;
+		} else if(key == kha_Key.LEFT || $char == "a") {
+			this.strafeLeft = true;
+		} else if(key == kha_Key.RIGHT || $char == "d") {
+			this.strafeRight = true;
+		}
+	}
+	,onKeyUp: function(key,$char) {
+		if(key == kha_Key.UP || $char == "w") {
+			this.moveForward = false;
+		} else if(key == kha_Key.DOWN || $char == "s") {
+			this.moveBackward = false;
+		} else if(key == kha_Key.LEFT || $char == "a") {
+			this.strafeLeft = false;
+		} else if(key == kha_Key.RIGHT || $char == "d") {
+			this.strafeRight = false;
+		}
 	}
 	,__class__: Project
 };
@@ -1788,11 +2036,26 @@ js_html_compat_Uint8Array._subarray = function(start,end) {
 	return a;
 };
 var kha_ImageList = function() {
+	this.uvmapDescription = { files : ["uvmap.png"], original_height : 512, type : "image", original_width : 512, name : "uvmap"};
+	this.uvmapName = "uvmap";
+	this.uvmap = null;
 };
 $hxClasses["kha.ImageList"] = kha_ImageList;
 kha_ImageList.__name__ = true;
 kha_ImageList.prototype = {
-	__class__: kha_ImageList
+	uvmap: null
+	,uvmapName: null
+	,uvmapDescription: null
+	,uvmapLoad: function(done) {
+		kha_Assets.loadImage("uvmap",function(image) {
+			done();
+		});
+	}
+	,uvmapUnload: function() {
+		this.uvmap.unload();
+		this.uvmap = null;
+	}
+	,__class__: kha_ImageList
 };
 var kha_SoundList = function() {
 };
@@ -1802,11 +2065,26 @@ kha_SoundList.prototype = {
 	__class__: kha_SoundList
 };
 var kha_BlobList = function() {
+	this.cube_objDescription = { files : ["cube.obj"], type : "blob", name : "cube_obj"};
+	this.cube_objName = "cube_obj";
+	this.cube_obj = null;
 };
 $hxClasses["kha.BlobList"] = kha_BlobList;
 kha_BlobList.__name__ = true;
 kha_BlobList.prototype = {
-	__class__: kha_BlobList
+	cube_obj: null
+	,cube_objName: null
+	,cube_objDescription: null
+	,cube_objLoad: function(done) {
+		kha_Assets.loadBlob("cube_obj",function(blob) {
+			done();
+		});
+	}
+	,cube_objUnload: function() {
+		this.cube_obj.unload();
+		this.cube_obj = null;
+	}
+	,__class__: kha_BlobList
 };
 var kha_FontList = function() {
 };
@@ -19477,8 +19755,6 @@ if(ArrayBuffer.prototype.slice == null) {
 var DataView = $global.DataView || js_html_compat_DataView;
 var Float32Array = $global.Float32Array || js_html_compat_Float32Array._new;
 var Uint8Array = $global.Uint8Array || js_html_compat_Uint8Array._new;
-Project.vertices = [-1.0,-1.0,-1.0,-1.0,-1.0,1.0,-1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,-1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,-1.0,-1.0,-1.0,-1.0,1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,1.0,1.0,-1.0,1.0,1.0,1.0,1.0,1.0,1.0,-1.0,-1.0,1.0,-1.0,1.0,1.0,1.0,-1.0,1.0,-1.0,-1.0,1.0,1.0,1.0,1.0,1.0,-1.0,1.0,1.0,1.0,-1.0,1.0];
-Project.colors = [0.583,0.771,0.014,0.609,0.115,0.436,0.327,0.483,0.844,0.822,0.569,0.201,0.435,0.602,0.223,0.310,0.747,0.185,0.597,0.770,0.761,0.559,0.436,0.730,0.359,0.583,0.152,0.483,0.596,0.789,0.559,0.861,0.639,0.195,0.548,0.859,0.014,0.184,0.576,0.771,0.328,0.970,0.406,0.615,0.116,0.676,0.977,0.133,0.971,0.572,0.833,0.140,0.616,0.489,0.997,0.513,0.064,0.945,0.719,0.592,0.543,0.021,0.978,0.279,0.317,0.505,0.167,0.620,0.077,0.347,0.857,0.137,0.055,0.953,0.042,0.714,0.505,0.345,0.783,0.290,0.734,0.722,0.645,0.174,0.302,0.455,0.848,0.225,0.587,0.040,0.517,0.713,0.338,0.053,0.959,0.120,0.393,0.621,0.362,0.673,0.211,0.457,0.820,0.883,0.371,0.982,0.099,0.879];
 haxe_Unserializer.DEFAULT_RESOLVER = new haxe__$Unserializer_DefaultResolver();
 haxe_Unserializer.BASE64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789%:";
 haxe_ds_ObjectMap.count = 0;
@@ -19516,8 +19792,8 @@ kha_Shaders.painter_text_fragData = "s572:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3
 kha_Shaders.painter_text_vertData = "s526:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgcHJvamVjdGlvbk1hdHJpeDsKYXR0cmlidXRlIHZlYzMgdmVydGV4UG9zaXRpb247CnZhcnlpbmcgdmVjMiB0ZXhDb29yZDsKYXR0cmlidXRlIHZlYzIgdGV4UG9zaXRpb247CnZhcnlpbmcgdmVjNCBmcmFnbWVudENvbG9yOwphdHRyaWJ1dGUgdmVjNCB2ZXJ0ZXhDb2xvcjsKCgp2b2lkIG1haW4oKQp7CglnbF9Qb3NpdGlvbiA9IChwcm9qZWN0aW9uTWF0cml4ICogdmVjNCh2ZXJ0ZXhQb3NpdGlvblswXSwgdmVydGV4UG9zaXRpb25bMV0sIHZlcnRleFBvc2l0aW9uWzJdLCAxLjApKTsKCXRleENvb3JkID0gdGV4UG9zaXRpb247CglmcmFnbWVudENvbG9yID0gdmVydGV4Q29sb3I7CglyZXR1cm47Cn0KCg";
 kha_Shaders.painter_video_fragData = "s656:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3V0aW9uIG1vZGUgOApwcmVjaXNpb24gbWVkaXVtcCBmbG9hdDsKdW5pZm9ybSBzYW1wbGVyMkQgdGV4Owp2YXJ5aW5nIHZlYzIgdGV4Q29vcmQ7CnZhcnlpbmcgdmVjNCBjb2xvcjsKCgp2b2lkIG1haW4oKQp7Cgl2ZWM0IHRleGNvbG9yXzk7Cgl0ZXhjb2xvcl85ID0gKHRleHR1cmUyRCh0ZXgsIHRleENvb3JkKSAqIGNvbG9yKTsKCXRleGNvbG9yXzkgPSB2ZWM0KCh2ZWMzKHRleGNvbG9yXzlbMF0sIHRleGNvbG9yXzlbMV0sIHRleGNvbG9yXzlbMl0pICogY29sb3JbM10pWzBdLCAodmVjMyh0ZXhjb2xvcl85WzBdLCB0ZXhjb2xvcl85WzFdLCB0ZXhjb2xvcl85WzJdKSAqIGNvbG9yWzNdKVsxXSwgKHZlYzModGV4Y29sb3JfOVswXSwgdGV4Y29sb3JfOVsxXSwgdGV4Y29sb3JfOVsyXSkgKiBjb2xvclszXSlbMl0sIHRleGNvbG9yXzlbM10pOwoJZ2xfRnJhZ0NvbG9yID0gdGV4Y29sb3JfOTsKCXJldHVybjsKfQoK";
 kha_Shaders.painter_video_vertData = "s504:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgcHJvamVjdGlvbk1hdHJpeDsKYXR0cmlidXRlIHZlYzMgdmVydGV4UG9zaXRpb247CnZhcnlpbmcgdmVjMiB0ZXhDb29yZDsKYXR0cmlidXRlIHZlYzIgdGV4UG9zaXRpb247CnZhcnlpbmcgdmVjNCBjb2xvcjsKYXR0cmlidXRlIHZlYzQgdmVydGV4Q29sb3I7CgoKdm9pZCBtYWluKCkKewoJZ2xfUG9zaXRpb24gPSAocHJvamVjdGlvbk1hdHJpeCAqIHZlYzQodmVydGV4UG9zaXRpb25bMF0sIHZlcnRleFBvc2l0aW9uWzFdLCB2ZXJ0ZXhQb3NpdGlvblsyXSwgMS4wKSk7Cgl0ZXhDb29yZCA9IHRleFBvc2l0aW9uOwoJY29sb3IgPSB2ZXJ0ZXhDb2xvcjsKCXJldHVybjsKfQoK";
-kha_Shaders.simple_fragData = "s271:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3V0aW9uIG1vZGUgOApwcmVjaXNpb24gbWVkaXVtcCBmbG9hdDsKdmFyeWluZyB2ZWMzIGZyYWdtZW50Q29sb3I7CgoKdm9pZCBtYWluKCkKewoJZ2xfRnJhZ0NvbG9yID0gdmVjNChmcmFnbWVudENvbG9yWzBdLCBmcmFnbWVudENvbG9yWzFdLCBmcmFnbWVudENvbG9yWzJdLCAxLjApOwoJcmV0dXJuOwp9Cgo";
-kha_Shaders.simple_vertData = "s310:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgTVZQOwphdHRyaWJ1dGUgdmVjMyBwb3M7CnZhcnlpbmcgdmVjMyBmcmFnbWVudENvbG9yOwphdHRyaWJ1dGUgdmVjMyBjb2w7CgoKdm9pZCBtYWluKCkKewoJZ2xfUG9zaXRpb24gPSAoTVZQICogdmVjNChwb3NbMF0sIHBvc1sxXSwgcG9zWzJdLCAxLjApKTsKCWZyYWdtZW50Q29sb3IgPSBjb2w7CglyZXR1cm47Cn0KCg";
+kha_Shaders.simple_fragData = "s264:I3ZlcnNpb24gMTAwCi8vIFVua25vd24gZXhlY3V0aW9uIG1vZGUgOApwcmVjaXNpb24gbWVkaXVtcCBmbG9hdDsKdW5pZm9ybSBzYW1wbGVyMkQgbXlUZXh0dXJlU2FtcGxlcjsKdmFyeWluZyB2ZWMyIHZVVjsKCgp2b2lkIG1haW4oKQp7CglnbF9GcmFnQ29sb3IgPSB0ZXh0dXJlMkQobXlUZXh0dXJlU2FtcGxlciwgdlVWKTsKCXJldHVybjsKfQoK";
+kha_Shaders.simple_vertData = "s307:I3ZlcnNpb24gMTAwCnByZWNpc2lvbiBtZWRpdW1wIGZsb2F0Owp1bmlmb3JtIG1hdDQgTVZQOwphdHRyaWJ1dGUgdmVjMyBwb3M7CnZhcnlpbmcgdmVjMiB2VVY7CmF0dHJpYnV0ZSB2ZWMyIHV2OwphdHRyaWJ1dGUgdmVjMiBub3I7CgoKdm9pZCBtYWluKCkKewoJZ2xfUG9zaXRpb24gPSAoTVZQICogdmVjNChwb3NbMF0sIHBvc1sxXSwgcG9zWzJdLCAxLjApKTsKCXZVViA9IHV2OwoJcmV0dXJuOwp9Cgo";
 kha_System.renderListeners = [];
 kha_System.foregroundListeners = [];
 kha_System.resumeListeners = [];
